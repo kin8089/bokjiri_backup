@@ -1,0 +1,138 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/et_rid"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="130dp"
+            android:layout_marginEnd="50dp"
+            android:layout_weight="1"
+            android:background="@drawable/edittext_btn_background"
+            android:elevation="3dp"
+            android:ems="10"
+            android:fontFamily="@font/cookiebold"
+            android:hint="아이디"
+            android:inputType="textPersonName"
+            android:textAlignment="center"
+            android:textColor="#474747"
+            android:textColorHint="#7a7a7a" />
+
+        <EditText
+            android:id="@+id/et_remail"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="50dp"
+            android:layout_weight="1"
+            android:background="@drawable/edittext_btn_background"
+            android:elevation="3dp"
+            android:ems="10"
+            android:hint="이메일"
+            android:inputType="textPersonName"
+            android:textAlignment="center"
+            android:textColor="#474747"
+            android:textColorHint="#7a7a7a"
+            android:fontFamily="@font/cookiebold"/>
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_rpass1"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="50dp"
+            android:layout_weight="1"
+            android:background="@drawable/edittext_btn_background"
+            android:elevation="3dp"
+            android:ems="10"
+            android:hint="비밀번호"
+            android:inputType="textPassword"
+            android:textAlignment="center"
+            android:textColor="#474747"
+            android:textColorHint="#7a7a7a"
+            android:fontFamily="@font/cookiebold"/>
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_rpass2"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="50dp"
+            android:layout_weight="1"
+            android:background="@drawable/edittext_btn_background"
+            android:elevation="3dp"
+            android:ems="10"
+            android:hint="비밀번호 확인"
+            android:inputType="textPassword"
+            android:textAlignment="center"
+            android:textColor="#474747"
+            android:textColorHint="#7a7a7a"
+            android:fontFamily="@font/cookiebold"/>
+
+        <android.widget.Button
+            android:id="@+id/btn_register"
+            style="@android:style/Widget.Button"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="50dp"
+            android:layout_weight="1"
+            android:background="@drawable/btn_background"
+            android:text="회원가입"
+            android:textColor="#ffffff"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/cookiebold"/>
+
+        <TextView
+            android:id="@+id/btn_login2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:clickable="true"
+            android:text="로그인 하시겠습니까?"
+            android:textColor="@color/Black"
+            android:textAlignment="center"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/cookiebold"/>
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/imageView5"
+            android:layout_width="418dp"
+            android:layout_height="4150dp"
+            android:layout_marginBottom="80dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/wave2"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

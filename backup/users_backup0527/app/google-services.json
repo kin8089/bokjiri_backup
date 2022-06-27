@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "249861716913",
+    "project_id": "login-32170",
+    "storage_bucket": "login-32170.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:249861716913:android:4ecb2e81d07bbc277f1b90",
+        "android_client_info": {
+          "package_name": "com.cookandroid.users"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "249861716913-4i7ppgmgoqvgnjhuhuklq58lcblsf759.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cookandroid.users",
+            "certificate_hash": "d82b489983663cbcfb5706018ea00196977de01d"
+          }
+        },
+        {
+          "client_id": "249861716913-e2196ledkjf9oasdnkiqns44a19e03f7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEc5CSZfVPELmqPwulc5HGQcUwHRaJ5Gw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "249861716913-e2196ledkjf9oasdnkiqns44a19e03f7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
