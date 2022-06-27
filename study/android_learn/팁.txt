@@ -1,3 +1,0 @@
-parent="Theme.AppCompat.DayNight.DarkActionBar" 
-
--> 테마에서 변경하면 버튼 색깔 회색으로 바뀜

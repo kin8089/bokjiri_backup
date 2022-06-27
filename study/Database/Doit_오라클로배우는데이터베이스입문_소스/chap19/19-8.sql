@@ -1,1 +1,0 @@
-EXECUTE pro_param_in(1,2,9,8);

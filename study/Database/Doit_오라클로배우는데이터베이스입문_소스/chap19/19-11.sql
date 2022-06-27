@@ -1,1 +1,0 @@
-EXECUTE pro_param_in(param1 => 10, param2 => 20);

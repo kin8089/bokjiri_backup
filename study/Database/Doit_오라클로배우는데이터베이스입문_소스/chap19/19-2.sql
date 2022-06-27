@@ -1,3 +1,0 @@
-SET SERVEROUTPUT ON;
-
-EXECUTE pro_noparam;
