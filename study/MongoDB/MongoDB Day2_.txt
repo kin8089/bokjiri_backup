@@ -1,0 +1,309 @@
+SQL문장과 Mongo에서 사용하는 명령어를 비교한 것입니다.
+
+MySQL 용어	Mongo 용어
+database	database
+
+table	collection
+
+index	index
+
+row	BSON document
+
+column	BSON field
+
+join	embedding and linking
+
+SQL 문장	Mongo 쿼리 문장
+
+CREATE TALE USERS (a int, b int)	db.createCollection("mycoll")
+
+INSERT INTO USERS VALUES (3,5)	db.users.insert({a:3, b:5})
+
+SELECT a, b FROM USERS	db.users.find({}, {a:1, b:1})
+
+SELECT * FROM users	db.users.find()
+
+SELECT * FROM users WHERE age=33	db.users.find({age:33})
+
+SELECT a,b FROM users WHERE age=33	db.users.find({age:33}, {a:1,b:1})
+
+SELECT * FROM users WHERE age=33 ORDER BY name	db.users.find({age:33}).sort({name:1})
+
+SELECT * FROM users WHERE age>33	db.users.find({'age':{$gt:33}})
+
+SELECT * FROM users WHERE age<33	db.users.find({'age':{$lt:33}})
+
+SELECT * FROM users WHERE name LIKE"%Joe%"	db.users.find({name:/Joe/})
+
+SELECT * FROM users WHERE name LIKE "Joe%"	db.users.find({name:/^Joe/})
+
+SELECT * FROM users WHERE age>33 AND age<=40	db.users.find({'age':{$gt:33,$lte:40}})
+
+SELECT * FROM users ORDER BY name DESC	db.users.find().sort({name:-1})
+
+SELECT * FROM users WHERE a=1 and b='q'	db.users.find({a:1,b:'q'})
+
+SELECT * FROM users LIMIT 10 SKIP 20	SELECT * FROM users LIMIT 10 SKIP 20
+
+SELECT * FROM users WHERE a=1 or b=2	db.users.find( { $or : [ { a : 1 } , { b : 2 } ] } )
+
+SELECT * FROM users LIMIT 1	db.users.findOne()
+
+SELECT DISTINCT last_name FROM users	db.users.distinct('last_name')
+
+SELECT COUNT(*y) FROM users	db.users.count()
+
+SELECT COUNT(*y) FROM users where AGE > 30	db.users.find({age: {'$gt': 30}}).count()
+
+SELECT COUNT(AGE) from users	db.users.find({age: {'$exists': true}}).count()
+
+CREATE INDEX myindexname ON users(name)	db.users.ensureIndex({name:1})
+
+CREATE INDEX myindexname ON users(name,ts DESC)	db.users.ensureIndex({name:1,ts:-1})
+
+EXPLAIN SELECT * FROM users WHERE z=3	db.users.find({z:3}).explain()
+
+UPDATE users SET a=1 WHERE b='q'	db.users.update({b:'q'}, {$set:{a:1}}, false, true)
+
+UPDATE users SET a=a+2 WHERE b='q'	db.users.update({b:'q'}, {$inc:{a:2}}, false, true)
+
+DELETE FROM users WHERE z="abc"	db.users.remove({z:'abc'});
+
+
+비교(Comparison) 연산자
+operator	설명
+$eq	(equals) 주어진 값과 일치하는 값
+$gt	(greater than) 주어진 값보다 큰 값
+$gte	(greather than or equals) 주어진 값보다 크거나 같은 값
+$lt	(less than) 주어진 값보다 작은 값
+$lte	(less than or equals) 주어진 값보다 작거나 같은 값
+$ne	(not equal) 주어진 값과 일치하지 않는 값
+$in	주어진 배열 안에 속하는 값
+$nin	주어빈 배열 안에 속하지 않는 값
+예제: likes 값이 10보다 크고 30보다 작은 Document 조회
+
+> db.articles.find( { “likes”: { $gt: 10, $lt: 30 } } ).pretty()
+
+> db.articles.find( { "likes": { $gt: 10, $lt: 30 } } ).pretty()
+{
+        "_id" : ObjectId("56c0ab6c639be5292edab0c5"),
+        "title" : "article02",
+        "content" : "content02",
+        "writer" : "Alpha",
+        "likes" : 23,
+        "comments" : [
+                {
+                        "name" : "Bravo",
+                        "message" : "Hey Man!"
+                }
+        ]
+}
+
+
+논리 연산자
+이 부분은 프로그래머라면 따로 설명이 필요 없을 듯 합니다.
+
+operator	설명
+$or	주어진 조건중 하나라도 true 일 때 true
+$and	주어진 모든 조건이 true 일 때 true
+$not	주어진 조건이 false 일 때 true
+$nor	주어진 모든 조건이 false 일때 true
+예제: title 값이 “article01” 이거나, writer 값이 “Alpha” 인 Document 조회
+
+> db.articles.find({ $or: [ { “title”: “article01” }, { “writer”: “Alpha” } ] })
+
+> db.articles.find({ $or: [ { "title": "article01" }, { "writer": "Alpha" } ] })
+{ "_id" : ObjectId("56c0ab6c639be5292edab0c4"), "title" : "article01", "content" : "content01", "writer" : "Velopert", "likes" : 0, "comments" : [ ] }
+{ "_id" : ObjectId("56c0ab6c639be5292edab0c5"), "title" : "article02", "content" : "content02", "writer" : "Alpha", "likes" : 23, "comments" : [ { "name" : "Bravo", "message" : "Hey Man!" } ] }
+예제: writer 값이 “Velopert” 이고 likes 값이 10 미만인 Document 조회
+
+> db.articles.find( { $and: [ { “writer”: “Velopert” }, { “likes”: { $lt: 10 } } ] } )
+
+이렇게도 가능합니다: > db.articles.find( { “writer”: “Velopert”, “likes”: { $lt: 10 } } )
+
+> db.articles.find( { $and: [ { "writer": "Velopert" }, { "likes": { $lt: 10 } } ] } )
+{ "_id" : ObjectId("56c0ab6c639be5292edab0c4"), "title" : "article01", "content" : "content01", "writer" : "Velopert", "likes" : 0, "comments" : [ ] }
+
+> db.articles.find( { "writer": "Velopert", "likes": { $lt: 10 } } )
+{ "_id" : ObjectId("56c0ab6c639be5292edab0c4"), "title" : "article01", "content" : "content01", "writer" : "Velopert", "likes" : 0, "comments" : [ ] }
+$regex 연산자
+
+
+
+$regex 연산자를 통하여 Document를 정규식을 통해 찾을 수 있습니다. 이 연산자는 다음과 같이 사용합니다.
+
+{ <field>: { $regex: /pattern/, $options: '<options>' } }
+{ <field>: { $regex: 'pattern', $options: '<options>' } }
+{ <field>: { $regex: /pattern/<options> } }
+{ <field>: /pattern/<options> }
+4번쨰 라인 처럼 $regex 를 작성하지 않고 바로 정규식을 쓸 수도 있습니다. 여기서 $options는 다음과 같습니다.
+
+
+
+option	설명
+i	대소문자 무시
+m	정규식에서 anchor(^) 를 사용 할 때 값에 \n 이 있다면 무력화
+x	정규식 안에있는 whitespace를 모두 무시
+s	dot (.) 사용 할 떄 \n 을 포함해서 매치
+$where 연산자
+$where 연산자를 통하여 javascript expression 을 사용 할 수 있습니다.
+
+예제: comments field 가 비어있는 Document 조회
+
+> db.articles.find( { $where: “this.comments.length == 0” } )
+
+> db.articles.find( { $where: "this.comments.length == 0" } )
+{ "_id" : ObjectId("56c0ab6c639be5292edab0c4"), "title" : "article01", "content" : "content01", "writer" : "Velopert", "likes" : 0, "comments" : [ ]
+$slice 연산자
+projector 연산자 중 $slice 연산자는 Embedded Document 배열을 읽을때 limit 설정을 합니다.
+
+예제: title 값이 article03 인 Document 에서 덧글은 하나만 보이게 출력
+
+> db.articles.find( { “title”: “article03” }, { comments: { $slice: 1 } } )
+
+> db.articles.find({"title": "article03"}, {comments: {$slice: 1}}).pretty()
+{
+        "_id" : ObjectId("56c0ab6c639be5292edab0c6"),
+        "title" : "article03",
+        "content" : "content03",
+        "writer" : "Bravo",
+        "likes" : 40,
+        "comments" : [
+                {
+                        "name" : "Charlie",
+                        "message" : "Hey Man!"
+                }
+        ]
+}
+
+$slice 가 없었더라면, 2개를 읽어와야하지만 1개로 제한을 두었기에 한개만 출력하게됩니다.
+
+
+
+$elemMatch 연산자
+query 연산자 중 $elemMatch와 사용법은 같습니다. 단 역할이 다르지요.
+다음과 같은 상황에서 사용합니다.
+
+예제11번에서 “ comments 중 “Charlie” 가 작성한 덧글이 있는 Document 조회 ” 를 했을때, 게시물 제목과 Charlie의 덧글부분만 읽고싶을땐 어떻게할까요?
+
+db.articles.find(
+    {
+        "comments": {
+            $elemMatch: { "name": "Charlie" }
+        }
+    },
+    {
+        "title": true,
+        "comments.name": true,
+        "comments.message": true
+    }
+)
+이렇게 해보면 의도와는 다르게 Delta 의 덧글도 출력합니다.
+
+{
+        "_id" : ObjectId("56c0ab6c639be5292edab0c6"),
+        "title" : "article03",
+        "comments" : [
+                {
+                        "name" : "Charlie",
+                        "message" : "Hey Man!"
+                },
+                {
+                        "name" : "Delta",
+                        "message" : "Hey Man!"
+                }
+        ]
+}
+$elemMatch 연산자를 projection 연산자로 사용하면 이를 구현 할 수 있습니다.
+
+예제: comments 중 “Charlie” 가 작성한 덧글이 있는 Document 중 제목, 그리고 Charlie의 덧글만 조회
+
+db.articles.find(
+...     {
+...         "comments": {
+...             $elemMatch: { "name": "Charlie" }
+...         }
+...     },
+...     {
+...         "title": true,
+...         "comments": {
+...             $elemMatch: { "name": "Charlie" }
+...         },
+...         "comments.name": true,
+...         "comments.message": true
+...     }
+... )
+{ "_id" : ObjectId("56c0ab6c639be5292edab0c6"), "title" : "article03", "comments" : [ { "name" : "Charlie", "message" : "Hey Man!" } ] }
+cursor.sort( DOCUMENT )
+이 메소드는 데이터를 정렬할 때 사용됩니다. 매개변수로는 어떤 KEY 를 사용하여 정렬 할 지 알려주는 document 를 전달합니다.
+
+이 document 의 구조는 다음과 같습니다.
+
+{ KEY: value }
+KEY 는 데이터의 field 이름이고, value 의 값은 1 혹은 -1 입니다. 이 값을 1로 설정하면 오름차순으로, -1로 하면 내림차순으로 정렬합니다.
+
+또한 여러 KEY를 입력 할 수 있고 먼저 입력한 KEY가 우선권을 갖습니다.
+
+예제1: _id 의 값을 사용하여 오름차순으로 정렬하기
+
+> db.orders.find().sort( { "_id": 1 } )
+{ "_id" : 1, "item" : { "category" : "cake", "type" : "chiffon" }, "amount" : 10 }
+{ "_id" : 2, "item" : { "category" : "cookies", "type" : "chocolate chip" }, "amount" : 50 }
+{ "_id" : 3, "item" : { "category" : "cookies", "type" : "chocolate chip" }, "amount" : 15 }
+{ "_id" : 4, "item" : { "category" : "cake", "type" : "lemon" }, "amount" : 30 }
+{ "_id" : 5, "item" : { "category" : "cake", "type" : "carrot" }, "amount" : 20 }
+{ "_id" : 6, "item" : { "category" : "brownies", "type" : "blondie" }, "amount" : 10 }
+예제2: amount 값을 사용하여 오름차순으로 정렬하고, 정렬한 값에서 id 값은 내림차순으로 정렬하기
+
+> db.orders.find().sort( { "amount": 1, "_id": -1 } )
+{ "_id" : 6, "item" : { "category" : "brownies", "type" : "blondie" }, "amount" : 10 }
+{ "_id" : 1, "item" : { "category" : "cake", "type" : "chiffon" }, "amount" : 10 }
+{ "_id" : 3, "item" : { "category" : "cookies", "type" : "chocolate chip" }, "amount" : 15 }
+{ "_id" : 5, "item" : { "category" : "cake", "type" : "carrot" }, "amount" : 20 }
+{ "_id" : 4, "item" : { "category" : "cake", "type" : "lemon" }, "amount" : 30 }
+{ "_id" : 2, "item" : { "category" : "cookies", "type" : "chocolate chip" }, "amount" : 50 }
+cursor.limit( value )
+이 메소드는 출력할 데이터 갯수를 제한할 때 사용됩니다. value 파라미터는 출력 할 갯수 값 입니다.
+
+예제3: 출력 할 갯수를 3개로 제한하기
+
+> db.orders.find().limit(3)
+{ "_id" : 1, "item" : { "category" : "cake", "type" : "chiffon" }, "amount" : 10 }
+{ "_id" : 2, "item" : { "category" : "cookies", "type" : "chocolate chip" }, "amount" : 50 }
+{ "_id" : 3, "item" : { "category" : "cookies", "type" : "chocolate chip" }, "amount" : 15 }
+cursor.skip( value )
+이 메소드는 출력 할 데이터의 시작부분을 설정할 때 사용됩니다. value 값 갯수의 데이터를 생략하고 그 다음부터 출력합니다.
+
+예제4: 2개의 데이터를 생략하고 그 다음부터 출력
+
+> db.orders.find().skip(2)
+{ "_id" : 3, "item" : { "category" : "cookies", "type" : "chocolate chip" }, "amount" : 15 }
+{ "_id" : 4, "item" : { "category" : "cake", "type" : "lemon" }, "amount" : 30 }
+{ "_id" : 5, "item" : { "category" : "cake", "type" : "carrot" }, "amount" : 20 }
+{ "_id" : 6, "item" : { "category" : "brownies", "type" : "blondie" }, "amount" : 10 }
+$push
+예제1. 배열 에 값 추가하기
+
+// Charlie document의 skills 배열에 "angularjs" 추가
+> db.people.update(
+... { name: "Charlie" },
+... { $push: { skills: "angularjs" } }
+... )
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+$pull
+예제1. 배열에 값 제거하기
+
+// Charlie document에서 skills 값의 mongodb 제거
+> db.people.update(
+... { name: "Charlie" },
+... { $pull: { skills: "mongodb" } }
+... )
+예제2. 배열에서 값 여러개 제거하기
+
+// Charlie document에서 skills 배열 중 "angularjs" 와 "java" 제거
+> db.people.update(
+... { name: "Charlie" },
+... { $pull: { skills: { $in: ["angularjs", "java" ] } } }
+... )
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+

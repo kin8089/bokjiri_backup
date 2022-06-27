@@ -1,0 +1,381 @@
+-- 앱에서 아이콘 출력
+
+res -> drawble -> 이미지 파일 추가(96x96)
+
+onCreate 함수에 getSupportActionBar() 추가
+
+ex)  getSupportActionBar().setDisplayShowHomeEnabled(true);
+      getSupportActionBar().setIcon(R.drawable.ic_launcher);
+
+
+-- 뷰와 뷰에서 상속된 것은 id 가질 수 있다
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/button1"
+        android:text="@string/strBtn1"
+        ></Button>
+
+id : "@+id/지정 아이디" 	  형식으로 만듬 ( @ = 리소스에서 참조
+				          @+ = 리소스에 추가)
+
+text : 버튼에 쓰일 글자, 되도록 string.xml에 모으는것이 좋다
+       "@string/문자열 이름"     string.xml 파일에 문자열이 저장했다는 뜻
+       string.xml은 res -> values폴더에 있음
+
+
+-- 버튼 객체 호출
+
+button1 = (button) findViewById(R.id.button1)	/(button) = 버튼 형식으로 캐스팅
+
+activity_main.xml 에서 만든 객체에 접근 : findViewById() 메소드
+
+
+-- 버튼에 이벤트 추가
+           
+	 public void onClick(View view) {
+
+		Toast.makeText(getApplicationContext(), "버튼이 눌렸어요",
+			Toast.LENGTH_SHORT).show();
+            }
+
+
+-- R 클래스 
+
+레이아웃 파일(main.xml , string.xml)에 들어있는 문자열, 버튼 등의
+아이디, 이미지 파일의 아이디 등은 모두 R 클래스에 자동 저장 됨
+
+따라서 버튼 객체를 호출할 때 findViewById메소드에 R.id.button1
+으로 객체를 호출했다
+
+
+-- orientation 속성으로 View 위젯 배치방향 바꾸기
+
+ 기본은 가로 방향으로 View 위젯을 배치하지만 orientation 속성으로 변경 가능
+
+horizontal : 가로방향 나열
+
+vertical : 세로 방향 나열
+
+android:orientation="vertical"
+
+
+ctrl + alt + l : 코드 정리
+
+
+-- 2-7 연습문제
+
+기본 이미지를 넣으려면 .xml 파일의 객체를 생성할 때
+android:src="" 명령어를 통해 추가
+
+
+EditText를 통해 입력받은 값을 통해 동작을 할때는
+edt1.getText().toString() 메소드를 통해 입력받은 값을 호출 가능
+
+
+버튼 클릭 시 이미지 변경
+img.setImageResource(R.drawble.~) 명령어를 통해 이미지 변경
+
+
+중앙 정렬
+android:layout_gravity="center" 명령어를 통해 중앙 정렬 가능
+그냥 gravity = View안의 내용을 중앙 정렬
+
+---------------------------------------------------------------------
+
+위젯 
+
+View : 앱 실행 화면을 구성하는 요소
+
+이미지, 텍스트, 버튼등이 모두 View에 속함
+
+화면에서 사용되는 것들은 모두 View 클래스의 상속을 받는다
+
+View 클래스는 위젯이라고 부르며 다른 위젯을 담을 수 있는
+위젯을 특별히 레이아웃이라고 부름 
+
+레이아웃은 ViewGroup 클래스에 속한다
+
+위젯은 단독을 존재하지 않고 위젯을 담는 틀인 레이아웃과 공존
+
+
+id 는 새로운 값을 부여하기 때문에 일반적으로 @id+/~ 로 쓰임
+
+
+-- .java 파일에서 위젯에 접근
+
+위젯 변수(이름) = (위젯형 ex_Button) findViewById(R.id.~) 
+
+
+-- layout_width , height
+
+width : 너비
+
+height : 높이
+
+match_parent or warp_content 값을 설정 가능
+
+match_parent : 부모의 너비나 높이를 맞춘다
+
+warp_content : 글자에 맞게 설정
+
+텍스트를 감싸고있는 틀(레이아웃)을 변경한다
+
+
+-- background 
+
+해당 속성은 위젯의 색상을 주로 #RRGGBB 값으로 지정 (RGB 값)
+
+값은 16진수로 00~FF로 표현함
+
+
+-- padding : 위젯의 경계선으로부터 위젯 안의 요소가 떨어짐
+
+
+-- layout_margin : 위젯간의 거리를 둔다
+
+
+-- visiblilty : 보일지 안보일지 여부
+
+invisible : 안보임
+
+visible : 보임
+
+gone : 넘김
+
+
+-- enable , clickable
+
+enable : 동작 여부
+
+clickable : 클릭이나 터치 가능 여부
+
+주로 java 코드에서 사용
+
+
+-- rotation : 회전 값
+
+
+--------------------------------------------------------------------
+
+기본 위젯 다루기
+
+
+1. 텍스트 뷰
+
+java 코드에서 setText(""); 명령어로 문자열 변경 가능
+
+setTextSize, setTextColor등 가능함
+
+
+3. 버튼과 에디트텍스트
+
+
+--------------------------------------------------------------------
+
+간단 계산기 만들기
+
+
+android:hint="" -> 글자 희미하게 보이기
+
+위젯마다 마진 10dp씩 할당
+
+
+-- 자바 코드
+
+위젯마다 변수 할당 및 id를 통해 호출
+
+입력값을 저장 할 String num1, num2 변수 선언
+결과 값을 저장 할 Integer reslut 변수 선언
+
+
+-- 버튼 클릭 시 실행 코드
+
+num1 = edt1.getText().toString(); -> 에디트텍스트로 입력받은 값을
+				변수에 저장
+
+result = Integer.parseInt(num1) + Integer.parseInt(num2) 
+	-> 입력받은 문자열을 int로 변경 후 연산하여 저장
+
+tev1.setText("계산 결과 : " + result.toString()); 
+	-> 저장한 결과 값을 텍스트뷰 위젯에 넘겨준다
+
+
+---------------------------------------------------------------------
+
+1. 컴파운드버튼 : 버튼의 하위 클래스
+
+체크박스, 라디오버튼, 스위치, 토글버튼의 상위 클래스임
+
+
+xml 코드
+
+<CheckBox
+	android:id="@+id/android"
+	android:text="안드로이드폰"
+	android:checked="true" />
+
+<CheckBox
+	android:id="@+id/iphone"
+	android:text="아이폰" />
+
+<CheckBox
+	android:id="@+id/window"
+	android:text="윈도폰"
+	android:checked="true" />
+
+자바 코드
+
+변수 선언 -> 위젯 호출 -> 동작 클래스 정의
+
+
+2. 스위치와 토글 : android:checked= "true / false"
+
+
+3. 라디오그룹과 라디오버튼
+
+라디오버튼은 여러개의 선택지 중 하나만 선택할 때 사용
+이때는 라디오 그룹을 통해 라디오버튼을 묶어줘야 한다
+
+<RadioGroup
+	~	>
+	<RadioButton
+		~
+	<RadioButton 
+		~
+</RadioGroup>
+
+
+4. 이미지뷰와 이미지버튼 
+
+이미지뷰 : 그림을 출력하는 위젯, 파일은 주로 drawble에 있어야함
+	접근 = "@drawble/그림 아이디"
+
+
+-- XML 속성
+
+이미지의 경로를 나타나는 src
+
+크기를 지정하는 maxHeight/maxWidth 등이 존재함
+
+<ImageView
+	android:src="@drawble/icon.png" />
+
+<ImageButton
+	android:src="@drawble/icon.png" />
+
+
+
+--------------------------------------------------------------------
+
+실습 4-2
+
+
+-- xml코드에 구현하기
+
+-> 체크박스에 선택을 했을때 다음 위젯이 보이도록 
+visibility="invisible" 옵션을 준다
+
+
+-- 자바 코드 구현
+
+변수 선언
+
+위젯 호출
+
+기능 구현
+
+1. 체크박스 
+
+-> 체크박스 선택시 다음 위젯이 보이도록 if - else문을 통해 구현
+
+이때 .isChecked() == true 를 통해 구현이 가능하다
+
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(ckb1.isChecked() == true){
+                    tev2.setVisibility(View.VISIBLE);
+                    grb1.setVisibility(View.VISIBLE);
+                    btn1.setVisibility(View.VISIBLE);
+                    img1.setVisibility(View.VISIBLE);
+                }else{
+                    tev2.setVisibility(View.INVISIBLE);
+                    grb1.setVisibility(View.INVISIBLE);
+                    btn1.setVisibility(View.INVISIBLE);
+                    img1.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+
+
+2. 라디오버튼 체크 시 해당 이미지 출력
+
+-> switch문을 통해서 구현
+
+.getCheckedRadioButtonId() 를 통해 구현 가능
+
+여러 선택지중 하나를 고르기 때문에 setOnClick을 사용한다
+
+이미지는 .setImageResource(R.drawble.~) 명령어로 구현
+
+        btn1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                switch (grb1.getCheckedRadioButtonId()){
+                    case R.id.rbt1:
+                        img1.setImageResource(R.drawable.dog2);
+                        break;
+
+                    case R.id.rbt2:
+                        img1.setImageResource(R.drawable.cat1);
+                        break;
+
+                    case R.id.rbt3:
+                        img1.setImageResource(R.drawable.rabbit2);
+                        break;
+
+                    default:
+                        Toast.makeText(getApplicationContext(), "동물을 선택하세요", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+        });
+
+
+---------------------------------------------------------------------
+
+직접 풀어보기 4-4
+
+
+위젯 파트는 4-2랑 동일
+
+체크박스 -> 토글로
+
+변수 선언할 때 라디오 버튼을 배열로 선언 
+
+RadioButton radioArray[] = new RadioButton[3];
+
+
+위젯 호출 시 배열의 인덱스로 호출함 
+
+radioArray[0] = (RadioButton) findViewById(R.id.rbt1);
+radioArray[1] = (RadioButton) findViewById(R.id.rbt2);
+radioArray[2] = (RadioButton) findViewById(R.id.rbt3);
+
+
+토글 클릭시 다음 위젯 보이게 if-else문 사용
+
+
+-- 라디오 버튼 클릭 시 바로 사진 나오게 만들기
+
+for문을 사용하기 위해서 라디오버튼을 배열에 담아놓았음
+
+for (int i=0; i<radioArray.length; i++){
+	final int index;
+	index = i;
+	radioArray[index].setOnClickListener(new View.OnClickLintenner() {
+		@Override
+                	public void onClick(View view) {img1.setImageResource(draw[index]);
+                }
+		}

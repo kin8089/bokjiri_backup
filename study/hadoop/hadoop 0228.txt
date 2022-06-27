@@ -1,0 +1,186 @@
+빅데이터 수집 / 저장 / 처리
+
+Hadoop : open system
+	Cloudera, Hortonworks, MapR
+
+HDHS(분산처리시스템)
+MapReduce
+
+
+-- hadoop 싱글모드 설정
+
+한 대의 컴퓨터에 Name node(Master node), Data node(worker node), Secondary name node 모두 설정
+
+1 name (Hyperion) + 3 data (new) - ubuntu : minimal version + 1 Secondary
+
+
+1. 리눅스 환경에서 jdk-8u321-linux-x64.tar.gz - 파일저장
+   
+   다운로드 디렉토리 - 압축 해제( tar -xvf 파일명)
+
+2. 하둡 설치 : 3.2.2 binary 
+
+3. 설정 - vi .bashrc
+	
+	export JAVA_HOME=~/Downloads/jdk1.8.0_321
+	export PATH=$PATH:$JAVA_HOME/bin
+	export HADOOP_HOME=~/Downloads/hadoop-3.2.2
+	export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
+
+	source .bashrc
+	
+
+4. 설정 확인 : java -version 
+	     javac -version
+	     hadoop version
+
+
+터미널 멈출 시 ctl + alt + f1으로 접속
+
+
+-- 싱글모드 설정
+
+vi $HADOOP_HOME/etc/hadoop/hadoop-env.sh
+
+104라인 - export JAVA_HOME=~/Downloads/jdk1.8.0_321
+
+
+vi $HADOOP_HOME/etc/hadoop/core-site.xml
+	<configuration>
+	    <property>
+		<name>fs.defaultFS</name>
+		<value>hdfs://localhost:9000</value>    :   primary name node의 호스트명
+	    </property>
+	</configuration>
+
+
+cd $HADOOP_HOME
+
+cd /etc/hadoop - ls
+
+
+vi $HADOOP_HOME/etc/hadoop/workers    :   hadoop 3.x 버전부터. 이전에는 slaves 파일
+
+	localhost   :  추가 (workers : DATA 노드 추가)
+
+
+-- SSH 키 생성
+
+* $ ssh-keygen -t rsa : tsa, ras(default)
+* $ cd ~/.ssh/
+* $ cp id_rsa.pub authorized_keys    //공개키 사본 생성
+* $ ls
+
+
+-- Namenode 포맷(1 회만 실행) 
+
+hdfs namenode -format
+
+		/tmp/hadoop-사용자계정/dfs/name has been succefully formatted (위로 10줄)
+
+$ cd /tmp/hadoop-사용자계정/dfs/name/current    :   파일 시스템블록 정보
+
+$ ls
+
+
+-- 파일 시스템 설정
+$ cd $HADOOP_HOME/sbin - ls
+
+$ vi start-dfs.sh
+
+$ HADOOP_HOME/sbin/start-dfs/sh
+	yes         // 3.x 버전에서 안물어봄
+	yes
+
+sudo apt-get-install openssh-server
+netstat -ntl
+
+./start-dfs.sh
+
+$ jps    //  java daemon process 확인 명령어
+
+	DataNode
+	SecondaryNameNode
+	NameNode(Primary NameNode)
+	jps
+
+
+127.0.0.1:9870
+
+
+-- 전체분산모드 설정
+
+Hyperion : Name Node
+slave1 : Data 1
+slave2 :        2
+slave3 :        3 , Secondary Name Node  // 백업 별도로 안만들고 데이터 중 하나를 지정
+
+
+Name Node : GUI모드로 설치
+
+Data Mode : 가상머신에 minimal 모드로 설치
+ 
+ubuntu-20.04-live-server-amd64.iso 설치 (윈도우)
+
+가상머신 복제
+
+새로 만들기 - 리눅스 - 우분투64bit
+
+2g , 40g
+
+설정 - 저장소 - 컨트롤러 - 다운받은 파일 설정
+
+리눅스 책 108페이지 참고
+
+
+10.0.2.15/24
+
+
+set nu
+set autoindent
+set ts=4
+set showmatch
+set hlsearch
+set ruler
+set fileencoding=utf8,euc-kr
+
+
+cd /etc/apt
+ls
+
+sudo mv sour tab sour tab.bak
+
+sudo wget http://dw.hanbit.co.kr/ubuntu/20.04/sources.list : 새로운 파일 다운
+
+sudo apt update 
+
+ : 20.04 LTS 초기의 소프트웨어만 설치하게 설정
+
+ip 주소 설정
+
+
+ip addr - ens32확인
+
+cd /etc/netplan
+
+sudo nano 00- tab
+
+ens32 : 장치 이름
+
+dhcp4 : true = 자동 ip 주소 할당
+
+true -> no
+addresses : [192.168.100.151/24]
+gateway4 : 192.168.100.2
+nameservers :
+addreses : [192.168.100.2]
+
+sudo su - root
+
+passwd
+root
+root
+
+ip addr 
+
+ufw enable

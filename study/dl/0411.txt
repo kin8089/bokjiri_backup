@@ -1,0 +1,57 @@
+자바 새 버젼 설치 
+
+https://docs.aws.amazon.com/corretto/latest/corretto-11-ug/downloads-list.html
+
+https://pypi.org/project/JPype1/#history
+
+-> 터미널 -> conda install -c conda-forge jpype-1.0.2
+
+
+conda install -c conda-forge nltk
+
+pip install konlpy
+
+pip install spacy
+
+conda install -c conda-forge wordcloud
+
+https://github.com/e9t/nsmc
+
+
+-- 데이터 전처리
+
+train_length = train_data['document'].astype(str).apply(len) 
+
+-> 각 리뷰마다 글자 수 확인
+
+
+apply() = pandas 객체에 열 혹은 행에 대해 함수를 적용하게 해주는 메소드
+
+
+TTF = true type font ( apple + windows)
+
+OTP = open type font ( 개방형)
+
+
+lambda : 익명의 함수를 만들 때 사용
+
+-> lambda x:
+
+
+-- tokenizer : fit을 통해서 일종의 단어 사전을 만듬 -> index형태로
+
+tokenizer = Tokenizer()
+tokenizer.fit_on_texts(clean_train_review)
+
+-- texts_to_sequences (keras에서 제공)
+
+train_sequence = tokenizer.texts_to_sequences(clean_train_review)
+
+-> 단어 인덱스를 tokenizer로 제공하고 단어를 인덱스 번호로 치환
+
+
+
+
+
+
+Convolution : 해당 커널을 각각 다 곱해서 더함 -> 상하좌우 1칸씩 날아감

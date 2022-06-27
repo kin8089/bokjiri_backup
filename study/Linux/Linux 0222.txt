@@ -1,0 +1,237 @@
+셸
+
+환경변수 : echo $0000 으로 실행 가능
+
+ex) echo $HOME (대문자만 사용)
+
+
+환경 변수 값을 변경하려면 export 환경변수=값
+
+
+그 외의 환경 변수는 printenv 명령으로 한번에 출력
+
+
+-- 셸 스크립트
+
+nano name.sh    or    gedit name.sh  :  셸 스크립트 실행
+
+
+#!/bin/sh : 특별형 형태의 주석(#!) 으로 bash를 사용한다는 의미. 첫 행에 꼭 써야함
+
+echo "user name: " $USER  :  환경변수를 통해서 내용을 출력
+
+exit 0 : 종료 코드를 반환
+
+
+-- 스크립트 파일 실행
+
+sh 명령어로 실행
+
+sh name.sh 
+
+
+chmod로 속성 변환 후 실행
+
+chmod +x name.sh
+
+./name.sh
+
+
+echo $PATH
+
+
+-- 변수에 값 저장
+
+testbal=Hello (띄어쓰기 x)
+echo $testval
+
+#!/bin/sh
+mybar="Hi Woo"
+echo $myvar
+echo "$myvar"
+echo '$myvar'
+echo \$myvar
+echo 값 입력 :     :  키보드로 값 입력
+read myvar
+echo '$myvar' = $myvar
+exit 0 
+
+
+#!/bin/sh
+num1=100
+num2=$num1+100
+echo $num2
+num3='expr %num1 + 200'
+echo $num3
+num4='expr \( $num1 + 200 \)  /  10 \* 2'  :  괄호 , * 앞에는 \를 붙인다
+echo $num4
+exit 0
+
+
+#!/bin/sh
+echo "실행파일 이름은 <$0>이다"
+echo "첫번째 피라미터는 <$1>이고, 두번째 피라미터는 <$2>다"
+echo "전체 피라미터는 <$*>다"
+exit0
+
+apt : $0
+-y : $1
+install : $2
+gftp : $3
+
+
+-- if & case 문
+
+if [ 조건 ]
+then
+    참일 경우 실행
+fi
+
+#!/bin/sh
+if [    "Woo" = "Woo"   ]
+then
+   echo "참입니다"
+fi
+exit 0
+
+
+#!/bin/sh
+if [    "Woo" != "Woo"   ]
+then
+   echo "참입니다"
+else
+   echo "거짓입니다"
+fi
+exit 0
+
+
+
+-- 문자열 비교 연산자
+
+= : 같으면 참
+
+!= : 다르면 참
+
+-n : null이 아니면 참
+
+-z : null이면 참
+
+
+-- 산술 비교 연산자
+
+-eq : 같으면 참
+
+-ne : 다르면 참
+
+-gt : 앞의 수가 크면 참
+
+-ge : 앞의 수가 크거나 같으면 참
+
+-lt : 앞의 수가 작으면 참
+
+-le : 앞의 수가 작거나 같으면 참
+
+!수식 : 수식이 거짓이면 참
+
+
+-- case문
+
+#!/bin/sh
+case "$1" in
+  start)
+    echo "시작~~";;
+  stop)
+    echo "중지~~";;
+  restart)
+    echo "다시 시작~~";;
+  *)
+    echo "뭔지 모름~~";;
+esac
+exit 0
+
+sh case1.sh stop : 중지~~
+
+*) : 정해놓은 값 말고 입력시 출력
+
+esac : case문 종료
+
+
+-- 반복문
+
+#!/bin/sh
+hap=0
+for 1 in 1 2 3 4 5 6 7 8 9 10
+do
+  hap='expr $hap + $i'
+done
+echo "1부터 10까지의 합: "$hap
+exit 0
+
+
+-- while문
+
+#!/bin/sh
+while [ 1 ]
+do
+  echo "우분투 20.04 LTS"
+done
+exit 0
+
+
+systemctl -t service
+	    target
+
+systemctl set-default multuser.target
+systemctl set-default graphicaluser.target
+systemctl start 서비스명
+systemctl stop
+systemctl status
+systemctl restart
+
+
+
+
+-- ps
+* -l : 긴 포맷으로 보여줌
+* -f : 풀 포맷으로 보여준다 (UID, PID, PPID등이 함께 표시)
+* -e : 커널 프로세스를 제외한 모든 프로세스 출력
+
+-- pstree
+실행되고 있는 프로세스들간의 연결구조를 트리형식으로 보여줌
+
+-- top
+현재 OS의 상태를 나타내주는 CLI 어플리케이션 ( 메모리사용량, CPU사용량 등)
+
+-- kill
+프로그램 강제종료
+
+-- sleep
+프로그램 중지
+
+-- jobs
+현재 작업 상태 보기 (background 작업들과 상태들을 나타내줌)
+
+-- fg(foreground) / bg(background)
+
+-- 환경변수 만들기 
+exprot MYPRJ=/home/juhee/work/prj/web
+cd $MYPRJ  
+
+-----------------------------------------------------------------------------------------------
+
+nmcli
+nmcli g  <- general
+nmcli n  <- network
+nmcli n off
+nmcli n on
+nmcli d  <- device
+nmcli c  <- connection
+nmcli c s '유선 연결 1'
+nmcli c down '유선 연결 1'
+nmcli c up '유선 연결 1'
+nmcli c mod '유선 연결 1' ipv4.method manual \
+
+-- 클라이언트에서 서버연결
+telnet 10.0.2.31  <- 서버ip (ip확인 : ip a)
+ssh juhee@10.0.2.41
+

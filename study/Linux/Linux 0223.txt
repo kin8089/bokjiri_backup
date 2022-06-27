@@ -1,0 +1,298 @@
+ssh moon@10.0.2.31
+
+sudo apt install vsftpd
+
+sudo vi /etc/vsftpd.conf
+
+25행 no -> YES    anon
+banner_file=/srv/ftp/welcome.msg - 26행 추가
+
+31행 주석해제  write
+
+39행 주석해제  anon
+
+43행 주석 해제 anon
+
+
+
+cd /srv
+
+cd ftp/
+
+touch welcome.msg
+
+mkdir pub
+
+chomod 777 pub
+
+cd pub
+
+ls
+
+cp /boot/vmlinuz=5.1 .
+
+cd
+
+ systemctl restart vsftpd.service
+
+ systemctl status vsftpd.service
+
+ftp 10.0.2.41 
+
+anonymous
+
+help
+
+binary
+
+get vmlinux-5.11.0-27-generic
+
+
+sudo systemctl set-defa ~ gra ~ 
+
+
+sudo shutdown -r now : 원격 리부트
+
+
+
+---------------------------------------------------------------------------------------------------------
+
+apt install xrdp
+
+sudo adduser xrdp ssl-cert
+
+sudo vi /etc/xrdp/startwm.sh
+
+33 DBUS_SESSION_BUS_ADDRESS
+34 XDG_RUNTIME_DIR
+
+sudo systemctl restart xrdp.service
+
+systemctl status xrdp
+
+netstat -at
+
+
+
+윈도우즈 - 원격 데스크톱 연결
+
+
+--------------------------------------------------------------------------------------------------------------
+
+-- 설치 오류 제거
+
+sudo rm /var/lib/dpkg/lock*
+
+sudo rm /var/lib/apt/lists/lock
+
+sudo rm /var/cache/apt/arc~/lock
+
+
+-- ssh 설치
+
+sudo apt install openssh-server
+
+
+-- 고정 ip 설정
+
+nmcli c mod '유선 연결 1' ipv4.method manual \
+
+ipv4.address 10.0.2.41/24 ipv4.gateway 10.0.2.1 ipv4.dns 168.126.63.1
+
+nmcli c down '유선 연결 1' && nmcli c up '유선 연결 1'
+
+
+-- xshell로 원격 연결
+
+virtual box - 도구 설정 - 네트워크 더블클릭 - 포트 포워딩 - 생성
+ 
+이름 - TCP - 127.0.0.1 - 40022 - 10.0.2.41 - 22 (ssh는 포트 22 고정)
+
+systemctl set-default grap~
+
+systemctl retart garp~
+
+reboot
+
+systemctl isolate multi-user.target
+
+ Xshell 실행 - 새 새션 생성 - 이름 - 프로토콜 : ssh - 포트번호 22 연결
+
+
+로그인 시 우분투 로그인 아이디 비번과 동일
+
+
+-- 다시 터미널 기본 화면으로 변경
+
+sudo systemctl get-default multi-user.target 
+
+reboot
+
+-----------------------------------------------------------------------------------------------
+
+-- mysql-server 설치
+
+apt install mysql-server
+
+
+-- 실행
+
+sudo mysql
+
+show databases; : 데이터베이스 출력
+
+create user 'moon'@'%' identified by '1234 ;  : 사용자 생성
+
+create database bulletin ; : 데이터베이스 생성
+
+grant all privileges on bulletin.* to 'moon'@'%';  : 생성한 사용자에게 해당 데이터베이스 권한 설정
+
+show grants for 'moon'@'%' ; : 권한 출력
+
+exit : 종료
+
+
+-- 일반 계정에서 접속
+
+mysql -u moon -p
+1234
+
+show databases ; 
+
+use bulletin ; : 해당 데이터베이스 사용
+
+create table `user` ( 
+`id` int(11)  not null auto_increment,
+`name` varchar(20) not null,
+`profile` varchar(20) default null,
+primary key(`id`));   : 테이블 생성
+
+``   :   작은 따옴표가 아니라 물결표 표시에 있는거임
+
+desc user
+
+insert into `user` values(1, "홍길동" , "developer"); : 테이블에 인서트
+
+insert into `user` values(2, "이미나" , "database administor");
+
+insert into `user` values(3, "고상원" , "database scientist, developer");
+
+insert into `user` values(4, "최원술" , "bigdata engineer ,developer");
+
+
+select * from user ; : user의 모든 내용 출력
+
+show tables : 테이블 출력
+
+
+
+-- 아파치 설치 
+
+apt install apach2
+
+cd /var/www/
+
+cd /html
+
+mv in~ in~.org
+
+vi index.org<
+
+우분투 크롬 - localhost 접속으로 확인
+
+
+
+-- php 설치
+
+apt install php-mysql
+
+vi phpinfo.php
+
+<?php
+phpinfo()
+?>
+
+
+cd /etc/php
+
+cd 7.4/
+
+cd apache2
+
+vi php.ini 
+
+phpmysql.php
+
+$host = "localhost" ;
+$user = "moon";
+$pw = "1234";
+$dbname = "bulletin";
+$conn = new mysqli($host, $user, $pw, $dbname);
+
+if($conn) {echo "connetion established", "<br>";}
+else {die ('could not connect: '.mysqli_error($conn));}
+
+$sql = "select * from user";
+$result = mysqli_query($conn, $sql);
+while $row = mysqli_fetch_array($result)){
+	echo $row['name'],"---",$row['profile'],"<br>";
+
+mysqli_close($conn);
+
+
+------------------------------------------------------------------------------------------------
+
+
+mysql
+
+create database wp_db;
+
+create user wp_user@'%' identified by '1234';
+
+grant all privileges on we_db.* to wp_user@'%';
+
+exit
+
+sudo apt install curl
+
+sudo tar zxvf wor~ -C /var/www/html
+
+curl -O https://ko.wordpress.org/wordpress-5.2.4-ko_KR.tar.gzip
+
+cd /var/www/html
+
+sudo chmod 707 wor~
+
+sudo chown -R www-data:www-data wor~
+
+cp wp-config-sample.php wp-config.php
+
+vi wp-config.php
+
+
+cd /etc/apache2
+
+vi 000~ 
+
+vi apach2.conf 
+
+systemctl restart apa~
+
+
+----------------------------------------------------------------------------------------------
+
+maple - php 
+
+web - pine
+
+
+apache2 : 웹서버
+
+db 억세스 : mysql - php를 통해 억세스
+
+
+웹서버 , apache2 , php (10.0.2.42)
+
+mysql (10.0.2.41)
+
+

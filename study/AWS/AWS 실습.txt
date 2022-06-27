@@ -1,0 +1,282 @@
+aws 실습
+
+1. AI(ML)
+2. Big Data
+3.Cloud Computing(aws : 6 , gcp : 1 ,azure : 3)
+4.MSA(도커,컨테이너,쿠버네티스)
+
+aws : 현재 가장 자주쓰이는 기술중에도 비중이 크다
+
+
+화면 캡쳐 : 윈도우 키 + shift + s
+
+--------------------------------------------------------------------------------------------------------
+리전 : 실제 aws 데이터센터가 있는 위치 , 작업시 항상 체크해줘야 함
+
+
+-- billing : 요금
+
+aws 사용하는 동안 주기적으로 확인
+
+실시간 반영 X  ->  대략 하루정도 딜레이
+
+
+
+-- IAM : Identity and Access Management
+
+Identity : 식별자, 신분 
+
+권한 : 
+
+한 컴퓨터로 다른계정으로 로그인 시 로그아웃 당함
+
+로그인 시 루트 계정으로 로그인해야함
+
+대시보드 : 현황판
+
+사용자 생성 후 csv파일 다운받아놔야함 - 링크 보내기
+
+ex) https://663238718147.signin.aws.amazon.com/console
+
+숫자 12자리가 로그인 시 필요한 id이기 때문
+
+별칭(로그인시 필요한 id) : 전세계에 유일해야함
+
+
+
+실습 1 : 
+
+leedaeri 사용자 추가 후 시크릿 창으로 동시 접속
+
+
+실습 2 : 
+
+별칭 만들어서 로그인 시키기
+
+
+실습 3 :
+
+모든 권한을 준 admin 사용자 생성 후 로그인
+
+생성 된 사용자는 billing 권한이 없음
+
+
+실습 4 :
+
+루트의 권한을 갖는 admin 생성 (루트에서 작업하다 오류 발생 시 치명적이기 때문에 admin으로 작업)
+
+admin 계정에서 사용자 생성 후 로그인
+
+
+
+-- MFA 추가 : 추가 인증 생성
+
+멀티 팩터 인증(MFA) - MFA 디바이스 할당
+
+안드로이드 : google OTP를 통해 디바이스 등록
+
+내 보안 자격 증명에서 수정 가능
+
+
+실습 5 :
+
+MFA 등록 후 로그인
+
+
+-------------------------------------------------------------------------------------------------------
+
+
+--  EC2 : Elastic(일래스틱 : 탄성적인) Compute Clould = 컴퓨터
+
+ex) EBS : Elastci Block Store : 저장소
+     EKC ....
+
+인스턴스
+
+보안그룹(security group) : 인스턴스에 대한 트래픽을 제어하는 "방화벽 규칙"
+
+키 페어
+
+실습 1:
+ 
+Ubuntu 인스턴스를 생성
+
+
+ubuntu :  "I am because you are" : 네가 있기에 내가 있다 , 라즈베리파이 OS , kali linux- Debian 계열 인스턴스(명령어 유사)
+
+centos('센트 OS'로 읽음, 센토스 X), fedora - Redhat 계열 인스턴스 (명령어가 유사함)
+
+
+
+키보드 상 하키 : 이전 명령어 
+
+% sudo apt -y update    세트. update 후 upgrade 순서 중요함
+% sudo apt -y upgrade
+
+**시스템 작동 시 , 수정 후 습관적으로 업데이트 업그레이드 시동
+
+% ls -al : ls : list = 목록 나열
+% pwd : 현재 디렉토리
+% nano hello.c : (nano : 편집기)
+% cp A B : copy A to B (복사)
+% rm A : romove A (삭제)
+% clear
+
+-- nginx (엔진 엑스라고 읽음) 설치 : 웹서버 설치
+
+% sudo apt -y install nginx
+
+
+(apt : 패키지 관리 명령어)
+
+(systemctl : 프로세스 관리 명령어)
+
+
+% sudo apt -y purge nginx : 삭제
+
+(% sudo apt -y remove nginx : 삭제)
+
+% sudo systemctl status nginx : 엔진 엑스 확인
+
+% sudo systemctl stop nginx  : 엔진 엑스 중지 
+
+% sudo systemctl start nginx : 엔진 엑스 시작
+
+
+
+입력 불가시 : 한영키 + q + Enter
+
+
+실습 1 :
+
+엔진 엑스 웹서버 구동 하시오 , 이후 중지 후 삭제
+
+sudo apt -y install nginx
+
+sudo systemctl status nginx
+
+업데이트 업그레이드
+
+sudo systemctl stop nginx
+
+sudo systemctl status nginx
+
+sudo apt -y purge nginx
+
+업데이트 업그레이드
+
+sudo apt autoremove (업그레이드 하면 시스템에서 지시)
+
+
+실습 2 : (최종목표 : 웹브라우저에서 출력)
+
+nano 에디터 사용하기
+
+% curl localhost : 엔진엑스 작동중인지 확인
+
+% cd /var/www/html : 디렉토리 이동
+
+% cat file이름 
+
+% sudo mv in<TAB> org.htmls
+
+sudo nano myfirst.html : 편집으로 텍스트입력등 가능
+
+mysecond.html 파일 만들어서 웹에서 보기
+mythird.html
+
+모든 과정을 undo 하기
+
+다시 나의 웹페이지 띄우기
+
+
+0.0.0.0/0 ipv4 
+
+::/0 ipv6 
+
+
+
+
+스냅샷 : 
+
+인스턴스에서 이미지 생성
+
+
+---------------------------------------------------------------------------------------------------
+
+-- 인스턴스 연결 (SSH 클라이언트)
+
+Mobaxterm 프로그램 사용
+
+SSH 로그인 id : 인스턴스 사용자 이름
+
+----------------------------------------------------------------------------------------------------
+
+
+-- S3 : 데이터를 버킷 내의 객체로 저장하는 객체 스토리지 서비스 (ex 구글드라이브)
+
+
+버킷 : 폴더개념 (전세계에 겹치는 이름 X)
+
+s3 & aws lamda 함수
+
+
+--------------------------------------------------------------------------------------------------------
+
+
+-- domain name 연동
+
+1. 도메인 구매
+
+2. Route 53 : 도메인 등록 가능
+
+-------------------------------------------------------------------------------------------------------
+
+
+-- RDS : 
+
+Relational Database Service
+
+
+인스턴스 : 클라우드에 있는 가상 서버
+
+
+$ mysql -u root -p
+password: rootroot
+mysql>
+
+퍼블릭 액세스 -> no
+
+아이디 비밀번호 어렵게 해야함
+
+(보안상 어렵게 하는게 정상)
+
+
+---------------------------------------------
+
+mysql 한글데이터 처리 작업 (인코딩)
+
+RDS -> 파라미터 그룹 생성
+
+파라미터 편집 -> character_set , collation 세팅
+
+character_set -> utf8mb4
+
+connection
+database
+filesystem
+results
+server
+
+collation -> utf8mb4_general_ci
+
+connection
+server
+
+연동할 DB 선택 -> 수정 -> 추가 구성 -> 파라미터 그룹 설정
+
+
+s3 -> 버킷(클라우드) 만들기
+
+cf, registry, respository 차이
+

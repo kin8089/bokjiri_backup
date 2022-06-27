@@ -1,0 +1,31 @@
+padding='valid' 
+
+-> conv 진행 시 상하좌우 1칸씩 날아가는걸 막아줌 (상하좌우에 1칸씩 추가하고 값을 0으로 준다 -> conv진행)
+
+
+GlobalMaxPooling = 전체에서 최대값 뽑아내라
+
+
+w = (100(입력) + 100(출력)) , 100(가중치)
+b = 100
+
+200 * 100 + 100 * 4 = 80400
+
+
+LSTM -- 4 * ((output + input) * output + output(bias) )
+
+
+model.add(layers.Embedding(5000,100)) -> 5000개(입력)를 100(출력)으로
+
+
+1차원 = Vector
+
+2차원 = Matrics
+
+3차원 이상 = Tensor
+
+autoencoder.add(layers.MaxPool2D(pool_size=2)) -> 입력값 / 2
+
+autoencoder.add(layers.UpSampling2D()) -> 입력값 * 2
+
+autoencoder.add(layers.Conv2D(16, kernel_size=3, activation='relu')) -> padding='same' x -> 16, 16 -> 14, 14

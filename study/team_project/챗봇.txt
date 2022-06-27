@@ -1,0 +1,13 @@
+intent : 발화 의도 -> 발화자의 목적을 파악하여 명령으로 인식
+
+	여러 표현 방법속에서 정확한 의도를 파악하여 학습시켜야 한다
+
+
+
+https://jfun.tistory.com/199
+
+https://madrabbit7.tistory.com/77
+
+https://wikidocs.net/89786
+
+https://derekahndev.github.io/machine%20learning/chatbot-1/

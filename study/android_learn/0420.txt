@@ -1,0 +1,44 @@
+메뉴 : 옵션 / 컨텍스트
+
+과정
+
+-> 메뉴 폴더 생성 & 메뉴 XML파일 생성
+
+-> Java 코드 onCreateOptionMenu() 메소드 오버라이딩
+
+-> Java 코드 onOptionsItemSelected() 메소드 오버라이딩
+
+
+XML코드
+
+<Menu>
+	<item
+		~~
+		~~ />
+
+	<item
+		~~
+		~~ />
+
+</Menu>
+
+
+Java코드
+
+onOptionItemSeleted() 메소드 사용 시 swtich문을 이용해서 구현
+
+switch (item.getItemId()) {
+case R.id.아이디:
+	선택 시 실행 코드
+	return true;
+case R.id.아이디2:
+	선택 시 코드
+	return true;
+	}
+return false;
+
+
+-------------------------------------------------------------------------
+
+메뉴바 -> code -> overriding method 를 통해 메소드 불러오기 가능
+

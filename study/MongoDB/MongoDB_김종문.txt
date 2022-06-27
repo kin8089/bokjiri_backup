@@ -1,0 +1,127 @@
+db.student.insertMany([{std_name : "Jack" , sex : "Male" , class :"VI", age : 11, grd_point:33},
+		{std_name : "Jenny" , sex : "Female" , class :"VI", age : 13, grd_point:30},
+		{std_name : "Thormas" , sex : "Male" , class :"V", age : 11, grd_point:35.1257},
+		{std_name : "Lassy" , sex : "Female" , class :"X", age : 17, grd_point:36.2514},
+		{std_name : "Mia" , sex : "Male" , class :"X", age : 19, grd_point:35.5201},
+		{std_name : "Mike" , sex : "Male" , class :"V", age : 16, grd_point:35.5201}])
+
+
+db.student.find({class : "VI" , sex : "Female"})
+
+db.student.find({sex : "Female" , grd_point : {$gte : 31} , class : "X"})
+
+
+---
+
+db.student.updateOne({"grd_point" : 303}, {"$set" : {"grd_point" : 303}})
+db.student.updateOne({"grd_point" : 30}, {"$set" : {"grd_point" : 800}})
+db.student.updateOne({"grd_point" : 35.1257}, {"$set" : {"grd_point" : 200}}) 
+db.student.updateOne({"grd_point" : 36.2514}, {"$set" : {"grd_point" : 550}})
+db.student.updateOne({"std_name" : "Mia"}, {"$set" : {"grd_point" : 350}})
+db.student.updateOne({"std_name" : "Mike"}, {"$set" : {"grd_point" : 700}})
+
+db.student.updateMany({}, {$rename : {"grd_point" : "Total_marks"}})
+
+db.student.updateOne({"std_name" : "Jack"}, {$set : {Result : "Pass"}})
+db.student.updateOne({"std_name" : "Jenny"}, {$set : {Result : "Pass"}})
+db.student.updateOne({"std_name" : "Thormas"}, {$set : {Result : "Fail"}})
+db.student.updateOne({"std_name" : "Lassy"}, {$set : {Result : "Pass"}})
+db.student.updateOne({"std_name" : "Mia"}, {$set : {Result : "Pass"}})
+db.student.updateOne({"std_name" : "Mike"}, {$set : {Result : "Pass"}})
+
+db.student.find({Total_marks : {$gte:400}})
+
+db.student.find({age : {"$not" : 11}})
+
+---
+
+db.student1.insertOne({
+   "name" : "Mick",  
+   "Course" : "btech",  
+   "batch_year" : 2018,  
+   "language" : ["c++", "java", "python"],  
+   "personal_details" :
+ { "Father_name" : "Jonny",  
+   "phone_no" : 8895321456,  
+   "age" : 23,  
+   "gender" : "Male",  
+   "City" : "NewYork" }})
+
+db.student1.insertOne({  
+           "name" : "Zoya",  
+           "Course" : "BCA",  
+           "batch_year" : 2020,  
+           "language" : ["C#", "JavaScript"],  
+           "personal_details" :   
+                     {  
+                      "Father_name" : "Henry",  
+                      "phone_no" : 9874563698,  
+                      "age" : 20,  
+                      "gender" : "Female",  
+                      "City" : "London",  
+                     }})
+
+db.student1.insertOne({  
+           "name" : "Jonny",  
+           "Course" : "MCA",  
+           "batch_year" : 2019,  
+           "language" : ["C#", "java", "PHP"],  
+           "personal_details" :   
+                     {  
+                      "Father_name" : "Thomas",  
+                      "phone_no" : 7845123698,  
+                      "age" : 24,  
+                      "gender" : "Male",  
+                      "City" : "London",  
+                     }})           
+ 
+db.student1.insertOne({  
+           "name" : "Oliver",  
+           "Course" : "BA",  
+           "batch_year" : 2017,  
+           "language" : ["c", "PHP"],  
+           "personal_details" :   
+                     {  
+                      "Father_name" : "William",  
+                      "phone_no" : 9997845123,  
+                      "age" : 25,  
+                      "gender" : "Male",  
+                      "City" : "Liverpool",  
+                     }})           
+
+db.student1.insertOne({  
+           "name" : "Mia",  
+           "Course" : "btech",  
+           "batch_year" : 2020,  
+           "language" : ["HTML", "CSS", "PHP"],  
+           "personal_details" :   
+                     {  
+                      "Father_name" : "Leo",  
+                      "phone_no" : 6312547896,  
+                      "age" : 22,  
+                      "gender" : "Female",  
+                      "City" : "Manchester",  
+                     }})       
+
+
+db.student1.find({$or : [ { "Course" : "MICA" } , {"batch_year" : 2018}]}) 
+
+db.student1.find({$or : [ {"age" : 20} ,  {"City" : "London"}]})
+
+db.student1.find({$or : [ {"language" : {"$in" : ["C++" , "java", "python"]}}]})
+
+db.student1.find({"City" : "London"})
+
+---
+
+db.student1.updateOne({"name" : "Mick"},{$set : {"pending_fees" : 12000}})
+
+db.student1.updateOne({"name" : "Zoya"},{$set : {"pending_fees" : 12000}})
+
+db.student1.updateOne({"name" : "Mia"},{$set : {"pending_fees" : 12000}})
+
+
+db.student1.find({$nor : [ {"City" : "London"} , {"age" : 22}]})
+
+
+db.student1.find().limit(3)

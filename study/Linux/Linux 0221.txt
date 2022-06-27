@@ -1,0 +1,427 @@
+하드디스크 사용
+
+설정 - 저장소 - 컨트롤러(SATA) - 하드디스크 추가(오른쪽 추가 클릭) - 만들기 - 생성한 디스크 선택
+
+
+fdisk -l  /  lsblk -f  :  디스크 상태 확인(슈퍼유저 권한)
+
+
+-- 파티션 나누기 (5기가 , 10기가)
+
+fdisk /dev/sdb
+
+last sector - +5g : 5기가 할당
+
+
+-- 포맷
+
+mfks.ext4 /dev/sdb1
+
+mfks.ext3 /dev/sdb2
+
+
+-- 마운트 할 디렉토리 생성
+
+cd /mnt/
+
+mkdir 000
+
+cd /000
+
+echo xxx > zzz.txt
+
+cat zzz.txt
+
+-- 마운트
+
+mount /dev/sdb1 /mnt/disk1
+
+mount /dev/sdb2 /mnt/disk2
+
+
+cd ../disk2 : -> 상위 디렉토리 -> disk2로 이동
+
+cp /etc/rc1.d/* . : rc1.d에 있는 파일 전부 현재 디렉토리에 카피
+
+
+-- 마운트 해제 
+
+umount /dev/sdb1 
+
+umount /mnt/disk2
+
+둘 중 아무거나 해도 해제 됨
+
+
+-- 실습
+
+디스크 3개로 분할 (3 ,5, 7)
+
+disk1 - fat
+disk2 - ext3
+disk3 - ext4
+
+
+cd /usr/sbin
+
+ls mk* : 포맷 명령어들 출력
+
+
+reboot : 리부팅 - 마운트 자동 해제
+
+
+-- 부팅시 자동 마운트 설정
+
+/etc/fstab
+
+vi /etc/fstab
+
+vi 에서 복사 : 복사하려는 위치에 커서 -> Y -> 다음 위치에 커서 -> p
+
+
+/dev/sdb1    /mnt/disk1          ext4       defaults      0          0     (6개 필드)
+
+
+-- raid 구축
+
+raid : 여러개의 디시크를 하나의 디스크처럼 사용
+
+비용 절감, 신뢰성 향상, 성능 향상의 효과
+
+1. 하드웨어 raid
+
+2. 소프트웨어 raid 
+
+
+linear raid : 최소 2개의 하드디스크 필요 , 2개 이상의 하드디스크를 1개의 볼륨으로 사용
+	   앞 디스크부터 차례로 저장, 100%의 공간효율성(가성비)
+
+raid0 : 최소 2개의 하드디스크 필요, 모든 디스크에 동시 저장, 100%의 공간효율성, 신뢰성 낮음
+         빠른 성능을 요구하되, 잃어버려도 큰 문제가 없을 시 사용
+
+raid1 : 미러링이라 부름, 데이터 저장에 두 배의 용량 필요(두개의 디스크에 동시 저장) 
+         결함 허용을 제공(신뢰성 높음)
+
+raid5 : 최소 3개의 하드디스크 필요, raid1의 안정성 + raid0의 공간 효율성, 오류 발생 시 패리티(parity)
+         를 이용하여 데이터 복구 (데이터가 짝수로 이뤄져야 하기때문에 하나가 망가져도 유추 가능)
+
+
+linear :  /dev/sdb, /dev/sdc
+
+raid0  :  /dev/sdd, /dev/sde
+
+raid1  :  /dev/sdf, /dev/sdg
+
+raid5  :  /dev/sdh, /dev/sdi, /dev/sdj
+
+
+
+----------------------------------------------------------
+
+lsi 컨트롤러 생성 
+
+하드디스크 2 ~ 10 생성
+
+슈퍼유저에서 생성한 하드디스크 확인
+
+하드 디스크 이름이 변경되었기 때문에 기존에 설정한 자동 마운트 X
+
+
+-- 파티션 할당
+
+sdb ~ sdi
+
+fdisk /dev/sdb
+
+t (type설정) -  L(리스트에서 코드보고 설정)  - fd (linux raid autodetect)
+
+기존 자동 마운트 # 붙여서 주석처리
+
+설정 - 저장소 - 하드 디스크 속성 - SCSI 규격에서 7번포트 사용불가능 - 변경( 7 -> 8 , 8 -> 9)
+
+
+-- raid 명령어 설치 
+
+sudo apt install mdadm
+
+
+
+-- Linear 생성
+
+mdadm --create /dev/md9 --level=linear --raid-devices=2 /dev/sdb1 /dev/sdc1
+
+mdadm --detail --scan
+
+mkfs.ext4 /dev/md9
+
+mkdir /mnt/raidlinear
+
+cd /mnt/raidlinear
+
+echo raidlinear > hello.txt
+
+df
+
+mount /dev/md7 /mnt/raidlinear
+
+
+
+-- raid0 생성
+
+mdadm  --create /dev/md8 --level=raid0 --raid-devices=2 /dev/sdd1 /dev/sde1
+
+mdadm --detail --scan
+
+mkfs.ext4 /dev/md8
+
+mkdir /mnt/raid0
+
+cd /mnt/raid0
+
+echo raid0 > hello.txt
+
+mount /dev/md8 /mnt/raid0
+
+df
+
+
+-- raid1 생성
+
+mdadm  --create /dev/md1 --level=1 --raid-devices=2 /dev/sdf1 /dev/sdg1
+
+mdadm --detail --scan
+
+mkfs.ext4 /dev/md1
+
+mkdir /mnt/raid1
+
+cd /mnt/raid1
+
+echo raid1 > hello.txt
+
+mount /dev/md1 /mnt/raid1
+
+
+
+-- raid5 생성
+
+mdadm  --create /dev/md5 --level=5 --raid-devices=3 /dev/sdh1 /dev/sdi1 /dev/sdj1
+
+mdadm --detail --scan
+
+mkfs.ext4 /dev/md5
+
+mkdir /mnt/raid5
+
+cd /mnt/raid5
+
+echo raid5 > hello.txt
+
+mount /dev/md5 /mnt/raid5
+
+
+b c d e f g h i j
+
+126 124 125 127
+
+9     8    1   5
+
+
+-- blkid로 자동 마운트 설정 (raid로 만든 디렉토리로 설정하면 리부팅했을때 이름이 바뀌어서 적용 x )
+
+readlink -f /dev/md/Hyperion\:1    :    이름이 뭘로 바뀔지 보여줌
+
+blkid /dev/md127                       :   찾은 이름으로 UUID를 복사
+
+vi에디터에서 uuid로 자동마운트 실행
+
+
+------------------------------------------------------------------------------------------------------
+
+-- 에러 처리
+
+설정 - 저장소 - 컨트롤러 3 5 7 9 삭제
+
+
+에디터에서 자동 마운터 주석
+
+scan으로 파악
+
+mdadm --run /dev/md124 : 실행 시키기
+
+다시 스캔
+
+mount 실행 
+
+--
+
+mdadm --run /dev/md126
+
+mount /dev/126 /mnt/raid5
+
+ls /dev/md -l 
+
+
+mdadm --detail /dev/md126  :  raid5 정보 출력
+
+
+-- 복구
+
+설정 - 저장소 - 하드 디스크 생성 후 삽입 - 7번 포트 8로 변경
+
+ㅊ ㄷ ㅎ ㅑ
+ 
+
+mdadm --stop /dev/md127
+
+
+mdadm --stop /dev/md124 
+
+오류 중지
+
+스캔으로 확인
+
+다시 mdadm create
+
+ 
+mdadm /dev/md/Hyperion\:1 --add /dev/sdg1   : 빠졌던 항목 새로 add 시키기
+
+
+------------------------------------------------------------------------------------------------------------
+
+
+패키지 설치
+
+dpkg -i gogogle-chrome-stable_current_amd64.deb
+
+dpkg -g galculator     //          --remove
+
+dpkg - P galculator    //          --purge.
+
+dpkg -l
+
+
+apt-get
+
+apt -cache
+
+apt
+
+apt-get update
+
+apt-get upgrade
+
+apt-get dist-upgrade
+
+apt-get install pkg....
+
+apt-get remove pkg...
+
+apt-get purge pkg...
+
+
+apt update 
+
+apt list
+
+apt upgrade
+
+apt full-upgrde
+
+apt install
+
+apt rmove pkg
+
+apt purge pkg
+
+apt show pkg
+
+
+
+-r : 8글자 이상의 파일이름 지정할 때
+
+-j : 윈도우에서 64bit 유니코드 이상의 이름을 허용
+
+-o : 파일이름 : 출력할 파일 이름 저장
+
+genisoimage -r -J -o my_test.iso /boot
+
+mount -o loop my_test.iso /media/iso
+
+
+services : 압축 명령어
+
+bzip 
+
+gzip
+
+bz2 
+
+zip services.zip services
+
+unzip : 압축 해제
+
+
+xz file.xz : 압축
+
+xz -d.xz : 압축 해제
+
+xz -l.xz : 정보보기
+
+xz -k.xz : 
+
+
+gzip file
+
+gzip -d file.gz
+
+zip file.zip file
+
+unzip file.zip
+
+
+
+tar cvf my.tar file...
+
+tar cvf my.tar filename services : 파일 묶고 풀어줌
+
+my.tar
+
+
+tar cvf
+
+tar tvf
+
+tar xvf
+
+tar jxvf 
+
+
+
+--------------------------------------------------------------------------------------------------------
+
+apt install openjdk-8-jdk
+
+java -version
+
+cd /usr/lib/jvm/java-8-openjdk-amd64
+
+sudo vi /etc/profile
+
+source /etc/profile
+
+echo $JAVA_HOME (필수요소)
+
+
+eclise 설치
+
+tar.gz 
+
+tar.xz
+
+tar.bz2 
+
+리눅스는 위의 형식으로 받음
+
+
+echo %PATH

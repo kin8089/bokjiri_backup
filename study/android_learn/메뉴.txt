@@ -1,0 +1,24 @@
+Drawer 레이아웃 설정
+
+그 안에 리니어레이아웃 -> 버튼 생성
+
+레이아웃 디렉토리에 파일 생성(activity_drawer) -> 메뉴 열렸을 때 화면
+
+
+width = 240dp
+
+gravity = start
+
+background = 
+
+
+메인 XML 
+
+<include layout="@layout/activity_drawer" /> 
+
+-> 메인 XML에 드로우어 XML을 포함시킴
+
+
+이미지는 int값임
+
+alt + insert키

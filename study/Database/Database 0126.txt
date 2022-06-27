@@ -1,0 +1,197 @@
+-- sqlplus / nolog 오라클 실행
+-- conn / as sysdba 관리자로 접속
+-- scott / tiger 로 사용자 생성
+
+create user 아이디명
+identified by 비번
+default tablespace users;
+
+create user scott
+identified by tiger
+default tablespace users;
+
+--접속 권한 부여
+grant resource, connect to scott;
+
+--접속 연결 확인
+conn scott/tiger 또는 conn
+
+--emp,dept,salgrade 테이블 생성
+--부모부터 생성, 삭제는 자식부터 해야한다.
+
+create table 테이블 이름
+(필드이름과 타입 적어서 리스트 작성);
+--대소문자 구별하지않고, 오라클은 작은따옴표만 사용하는데 따옴표 사용할때만 대소문자 구분을 한다.
+
+--1) dept 생성
+create table dept
+( deptno number(2) constraint pk_dept primary key,
+  dname varchar2(15),
+  loc varchar2(13) );
+
+--2)emp 생성
+create table emp
+( empno number(4) constraint pk_emp primary key,
+  ename varchar2(10),
+  job varchar2(9),
+  mgr number(4),
+  hiredate date,
+  sal number(7,2),
+  comm number(7,2),
+  deptno number(2),
+  constraint fk_dept foreign key(deptno) references dept(deptno));
+-- 기본키지정과 외래키 지정
+-- 외래키 지정할때 deptno를 외래키로 지정해주고 dept테이블의 deptno를 참조한다.
+-- 필드이름이나 타입을 잘못기입할경우에 바꿀수있다 ex) ename을 enaem으로 잘못기입했을때, number타입을 varchar2타입으로 잘못기입했을때
+-- 왠만하면 바꾸는거보다 테이블을 삭제하고 다시 만들어주는게 좋음 drop table 테이블이름;
+-- 테이블 구조 볼때 desc 테이블이름;
+
+--3)salgrade 생성
+create table salgrade
+( grade number,
+  losal number,
+  hisal number);
+
+--spool 설정(spooling 할때)
+spool 경로명\파일이름.txt
+spool c:\temp\db_0126.txt
+--show spool로 확인
+--spool 종료시에는 spool off
+--spool을 만들어놓으면 내가 작성한 코드와 오류 실행결과등 모든게 파일로 저장된다.
+--commit 은 db에 disk에 저장시키는거고 spool은 disk와 관련이 없다.
+
+--point1 테이블 생성(no number, name varchar2(10)
+--point2 테이블 생성(no를 기본키로 설정)
+  (no number, name varchar2(10))
+
+create table point1
+(no number,
+ name varchar2(10));
+
+create table point2
+(no number constraint pk_no primary key,
+ name varchar2(10));
+
+--제약사항 보기
+select constraint_name,constraint_type from all_constraints
+where table_name in ('DEPT', 'EMP');
+--from all_constraints 는 키워드인데 select constraint_name,constraint_type이름과 타입을 보여달라는 말이다.
+--where table_name in ('DEPT', 'EMP')은 테이블이름이 dept 와 emp인거의 constraint를 보여달라고 범위를 정해주는 코드
+
+--point1, point2 제약사항보기
+select constraint_name,constraint_type from all_constraints
+where table_name in ('point1', 'point2');
+
+create table test
+(no number primary key,
+ name varchar2(10));
+--constraint 로 기본키의 이름을 정해주지않으면 SYS_C007003이런식으로 constraint_name이 자동부여된다.
+
+-- point1, 데이터 삽입
+-- insert into 테이블이름 values
+-- (데이터.....)
+--1번데이터)
+insert into point1 values
+(111, 'kim');
+--2번데이터)
+insert into point1 values
+(111, 'lee');
+
+-- 데이터 출력
+-- select 필드리스트
+-- from 테이블 이름;
+
+select no,name
+from point1;
+
+-- *:all을 의미
+select *
+from point1;
+
+--point1에 추가삽입
+insert into point1 values
+(222,'choi');
+insert into point1 values
+(333,'choi');
+
+--point2에 삽입
+insert into point2 values
+(111,'kim');
+insert into point2 values
+(111,'lee');
+--기본키가 중복될경우 ORA-00001: unique constraint (SCOTT.PK_NO) violated 라고뜬다.
+
+insert into point2 values
+(222,'lee');
+insert into point2 values
+(333,'lee');
+
+--사원DB 레코드 삽입
+insert into dept values
+(10,'ACCOUNTING', 'NEW YORK');
+insert into dept values
+(20, 'RESEARCH', 'DALLAS');
+insert into dept values
+(30, 'SALES', 'CHICAGO');
+insert into dept values
+(40, 'OPERATIONS', 'BOSTON');
+--데이터를 잘못삽입한경우 delete 테이블이름;으로 해당 테이블의 데이터를 다지우고 다시 삽입한다.
+
+--emp 데이터 삽입
+-- 1)
+insert into emp values
+(7369, 'SMITH', 'CLERK', 7902, '1980/12/17', 800, null, 20);
+
+-- 2)
+--에러뜨는 경우
+--insert into emp values
+--(7499, 'ALLEN', 'SALESMAN', 7698, '1981-2-20', 1600, 300, 90);
+--참조하는 부모인 dept에 부서번호인 deptno에 90이 없어서 뜨는 에러
+--ORA-02291: integrity constraint (SCOTT.FK_DEPT) violated - parent key not found
+
+insert into emp values
+(7499, 'ALLEN', 'SALESMAN', 7698, '1981-2-20', 1600, 300, 10);
+
+-- 3)
+insert into emp values
+(7521, 'WARD', 'SALESMAN', 7698, '1981-2-22', 1259, 500, 30);
+
+-- 4)
+insert into emp values
+(7566, 'JONES', 'MANAGER', 7839, '1981-4-02', 2975, null, 20); 
+
+--5)
+insert into emp values
+(7654, 'MARTIN', 'MANAGER', 7698, '1981-9-28', 1250, 1400, 30);
+
+--6)
+insert into emp values
+(7698, 'BLAKE', 'MANAGER', 7839, '1981-05-01', 2850, null, 30);
+
+--7)
+insert into emp values
+(7782, 'CLARK', 'MANAGER', 7839, '1981-06-09', 2450, null, 10);
+
+--8)
+insert into emp values
+(7788, 'SCOTT', 'ANALYST', 7566, '1987-04-19', 3000, null, 20);
+
+--9)
+insert into emp values
+(7839, 'KING', 'PRESIDENT', null, '1981-11-17', 5000, null, 10);
+
+--10)
+insert into emp values
+(7844, 'TUENER', 'SALESMAN', 7698, '1981-09-08', 1599, 0, 30);
+
+
+1. 관계형 DBMS
+2. table, entity, attribute, relationship
+3. field, tuple
+4. primary key, foreign key, super key
+5. 유일성, 최소성
+6. 기본키 & 외래키 제약사항
+7. 테이블 생성 명령어, 데이터 삽입을 하여 테이블을 완성
+   (데이터는 5개씩 각자 입력)
+student(no number, name varchar2(10), dno number) : 기본키(no)
+department(dno number, dname varchar2(15) : 기본키(dno)

@@ -1,0 +1,301 @@
+http://repos-va.psychz.net/centos/8.3.2011/isos/x86_64/
+
+CentOS-8.3.2011 -x86 64-dvd1.iso 
+
+
+nuch.apache.org
+
+
+NDFS(Nuch Distributed File System)
+
+RMI(Remote Method Invocation)
+
+RPC(Remote Procedure Call)
+
+Thread (병렬처리)
+
+
+Chuckwa, Scribe, Flume(log 수집기)
+
+
+
+Hive, Pig, Spark, Impala
+spop
+
+Hive HQL (Hive Query Language)
+
+Pig Latin
+
+Spark batch ** : 실시간 스트리밍, R(통계 분석), Python, Scala(SQL 호환) 
+
+
+시각화 : Maplotlib, seaborn, D3.js
+
+workflow, oozle, Linux cron(백업)
+
+
+
+Ganglia : 시스템 리소스(Memory, CPU, 컴퓨터) 관리
+
+Naglos
+
+Hue : 저장장치 상태 관리 UI 제공
+
+Chef : 프로그램 설치 용이
+
+AVRO : 이기종 간에 데이터 주고 받는 표준
+
+
+OLTP : on-line Transcation Processing - 읽기 쓰기
+OLAP : on-line Analytical Processing - 읽기 (Hadoop)
+
+
+HBase(hbase.apache.org) : 
+
+
+---------------------------------------------------------------------------------------------------------
+
+VM - 새로만들기 - Linux - RedHat 64bit - 2g - 20g
+
+파일 - 호스트 네트워크 - 만들기 - IPv4 56 -> 100
+
+설정 - 저장소 - 디스크 파일 - CentOS 삽입
+
+master : GUI , slave : 최소 설치
+
+네트워크 - 이더넷 on
+
+파일 - 환경설정 - 입력 - 
+
+CentOS - 입력 - 한국어(hangul)
+
+유선 네트워크 설정 - 
+
+터미널 - su - root
+
+	cd /etc/yum.repos.d (apt) 
+	
+	vi CentOS- Appstream
+	14줄 yy(복사)
+	p붙여넣기
+	붙여넣은거 mirror -> vault 로 변환
+	
+	vi ~ baseOS
+	14줄 yy(복사)
+	p붙여넣기
+	붙여넣은거 mirror -> vault 로 변환
+
+	vi ~ Extras
+	14줄 yy(복사)
+	p붙여넣기
+	붙여넣은거 mirror -> vault 로 변환
+
+	dnf install epel-release
+	dnf install gcc make perl kernel-devel kernel-headers dkms
+
+장치 - 게스트 확장 cd 삽입
+
+
+바탕화면 - 우클릭 - 디스플레이 - 해상도 - 1920
+
+su - root
+
+yum install vim (apt -> yum)
+
+vi .bashrc (alias 추가)
+
+source .bashrc (적용)
+
+-------------------------------------------------------------------
+
+slave1 생성
+
+설정 - 저장소 - 디스크 삽입
+
+소프트웨어 선택 - 최소설치
+
+네트워크 - 켬 - 이름 설정
+
+2 , 3 복제
+
+hostname 
+
+root - hostnamectl set-hostname slave2
+
+--------------------------------------------------------------------
+
+연결
+
+1. 리눅스 환경에서 jdk-8u321-linux-x64.tar.gz - 파일저장
+
+2. 하둡 설치 : 3.2.2 binary 
+
+mv *.gz ../ (gz파일 전부 이전 디렉토리로)
+
+압축 해제( tar -xvf 파일명)
+
+
+3. 설정 - vi .bashrc
+	
+	export JAVA_HOME=~/Downloads/jdk1.8.0_321
+	export PATH=$PATH:$JAVA_HOME/bin
+	export HADOOP_HOME=~/Downloads/hadoop-3.2.2
+	export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
+
+	source .bashrc
+	
+
+4. 설정 확인 : java -version 
+	     javac -version
+	     hadoop version
+
+
+터미널 멈출 시 ctl + alt + f1으로 접속
+
+
+-- 싱글모드 설정
+
+vi $HADOOP_HOME/etc/hadoop/hadoop-env.sh
+
+104라인 - export JAVA_HOME=~/Downloads/jdk1.8.0_321
+
+
+vi $HADOOP_HOME/etc/hadoop/core-site.xml
+	<configuration>
+	    <property>
+		<name>fs.defaultFS</name>
+		<value>hdfs://localhost:9000</value>    :   primary name node의 호스트명
+	    </property>
+	</configuration>
+
+
+cd $HADOOP_HOME
+
+cd /etc/hadoop - ls
+
+
+vi $HADOOP_HOME/etc/hadoop/workers    :   hadoop 3.x 버전부터. 이전에는 slaves 파일
+
+	localhost   :  추가 (workers : DATA 노드 추가)
+
+
+-- SSH 키 생성
+
+* $ ssh-keygen -t rsa : tsa, ras(default)
+* $ cd ~/.ssh/
+* $ cp id_rsa.pub authorized_keys    //공개키 사본 생성
+* $ ls
+
+
+-- Namenode 포맷(1 회만 실행) 
+
+hdfs namenode -format
+
+		/tmp/hadoop-사용자계정/dfs/name has been succefully formatted (위로 10줄)
+
+$ cd /tmp/hadoop-사용자계정/dfs/name/current    :   파일 시스템블록 정보
+
+$ ls
+
+
+-- 파일 시스템 설정
+$ cd $HADOOP_HOME/sbin - ls
+
+$ vi start-dfs.sh
+
+$ HADOOP_HOME/sbin/start-dfs/sh
+	yes         // 3.x 버전에서 안물어봄
+	yes
+
+sudo apt-get-install openssh-server
+netstat -ntl
+
+./start-dfs.sh
+
+$ jps    //  java daemon process 확인 명령어
+
+	DataNode
+	SecondaryNameNode
+	NameNode(Primary NameNode)
+	jps
+
+
+127.0.0.1:9870
+
+
+-- 전체분산모드 설정
+
+Hyperion : Name Node
+slave1 : Data 1
+slave2 :        2
+slave3 :        3 , Secondary Name Node  // 백업 별도로 안만들고 데이터 중 하나를 지정
+
+
+Name Node : GUI모드로 설치
+
+Data Mode : 가상머신에 minimal 모드로 설치
+ 
+ubuntu-20.04-live-server-amd64.iso 설치 (윈도우)
+
+가상머신 복제
+
+새로 만들기 - 리눅스 - 우분투64bit
+
+2g , 40g
+
+설정 - 저장소 - 컨트롤러 - 다운받은 파일 설정
+
+리눅스 책 108페이지 참고
+
+
+10.0.2.15/24
+
+
+set nu
+set autoindent
+set ts=4
+set showmatch
+set hlsearch
+set ruler
+set fileencoding=utf8,euc-kr
+
+
+cd /etc/apt
+ls
+
+sudo mv sour tab sour tab.bak
+
+sudo wget http://dw.hanbit.co.kr/ubuntu/20.04/sources.list : 새로운 파일 다운
+
+sudo apt update 
+
+ : 20.04 LTS 초기의 소프트웨어만 설치하게 설정
+
+ip 주소 설정
+
+
+ip addr - ens32확인
+
+cd /etc/netplan
+
+sudo nano 00- tab
+
+ens32 : 장치 이름
+
+dhcp4 : true = 자동 ip 주소 할당
+
+true -> no
+addresses : [192.168.100.151/24]
+gateway4 : 192.168.100.2
+nameservers :
+addreses : [192.168.100.2]
+
+sudo su - root
+
+passwd
+root
+root
+
+ip addr 
+
+ufw enable

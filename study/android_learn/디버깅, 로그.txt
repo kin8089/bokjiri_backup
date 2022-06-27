@@ -1,0 +1,9 @@
+Log.e : 에러, 에러를 로그에 찍어라
+
+int값은 보통 String으로 출력하라고 에러가 뜸
+
+alt + enter로 해결
+
+-> String.valueOf(a)
+
+-> String으로 변환함

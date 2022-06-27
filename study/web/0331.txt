@@ -1,0 +1,80 @@
+
+
+STATICFILES_DIR : 기본 경로 이외 다른 디렉토리
+
+https://getbootstrap.com/ > 4.6.0 docs
+
+
+base.html 확장
+	- detail.html 
+	- result.html
+
+사용자 관련 공유 기능
+
+common 앱
+
+앱 등록
+url.py 동록
+
+
+mysql 모듈 설치
+conda install -c bioconda mysqlclient
+pip install mysqlclient
+
+데이터베이스 사용자 설정
+# settings.py
+
+
+
+
+mysql -> 
+
+create database mysite_db charset='utf8';
+create user 'webdb'@'localhost'
+	identified by 'webdb';
+grant all priviegers on mysite_db. *
+	to 'webdb'@'localhost';
+
+# settings.py 
+- mysql설정
+
+'default' : {
+        'ENGINE' : 'django.db.backends.mysql',
+	'NAME' : 'mysite_db' ,
+	'USER' : 'webdb',
+	'PASSWORD' : 'webdb',
+	'HOST' : 'localhost',
+	'PORT' : '3306',
+    }
+}
+
+# 데이터베이스 초기화
+
+python manage.py migrate
+python manage.py makemigrations
+
+
+# 수퍼유저 생성
+
+python manage.py create superuser
+
+
+# 게시판 만들기 (목록 작성 조회 삭제)
+
+이미지 첨부
+
+conda install -c conda-forge pillow
+
+py mana	~ startapp board
+
+목록
+
+getbootstrap.com 
+
+앱 등록
+
+migration
+db에 반영
+
+
+# 작성하기 /new

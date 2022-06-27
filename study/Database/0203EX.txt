@@ -1,0 +1,58 @@
+함수 
+
+1. 부서번호가 30인 사원들의 이름에서 앞글자 세글자만 출력하고 나머지는 * 처리
+
+select rpad(substr(ename, 1, 3), 6, '*') from emp
+where deptno = 30;
+
+
+2. 사원들중 급여가 1000이하인 경우 50%인상, 2000이하인 경우 30%인상하여 사원이름과 급여 출력
+
+select ename, sal,
+case
+when sal < 1000 then sal*1.5
+when sal < 2000 then sal*1.3
+else sal
+end as upsal
+from emp;
+
+
+3. 부서별 사원들의 급여와 평균급여를 출력
+
+select deptno, ename,avg(sal) from emp
+group by rollup(deptno,ename)
+order by deptno;
+
+4. 부서별 사원들의 급여를 나란히 출력
+
+select deptno,
+	listagg(sal, ', ')
+	within group(order by ename)
+	from emp
+	group by deptno;
+
+서브쿼리
+
+1. 'BLAKE' 보다 낮은 급여를 받는 사원들을  출력
+
+select ename, sal
+from emp
+where sal < any
+(select sal from emp
+where ename = 'BLAKE');
+
+2. 직책이 'MANAGER'인 사원중 가장 높은 급여를 받는 사원보다 높은 급여를 받는
+사원들의 부서번호, 이름, 급여를 출력
+
+select deptno,ename,sal from emp
+group by deptno,ename,sal
+having sal > all
+(select sal from emp
+where job = 'MANAGER');
+
+3. 부서별 평균 급여보다 높은 급여를 받는 사원들을 출력
+
+select deptno, ename, sal from emp
+group by deptno,ename,sal
+having sal >
+(select avg(sal) from emp);

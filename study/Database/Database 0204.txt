@@ -1,0 +1,547 @@
+
+any 연산자
+
+-- 30번 부서 사원들의 최대 급여보다 적은 급여를 받는 사원 정보 출력
+
+select * from emp
+where sal < any (select sal from emp
+		where deptno = 30)
+order by sal, empno;
+
+
+-- 30번 부서 사원들의 최소 급여보다 많은 급여를 받는 사원 정보 출력
+
+select * from emp
+where sal > any
+(select sal from emp
+where deptno = 30);
+
+
+--------------------------------------------------------------------------------------------
+
+all 연산자
+
+
+-- 부서 번호가 30인 사원들의 최소 급여보다 더 적은 급여를 받는 사원 출력
+
+select * from emp
+where sal < all
+(select sal from emp
+where deptno = 30);
+
+
+-- 부서 번호가 30인 사원들의 최대 급여보다 더 많은 급여를 받는 사원 출력
+
+select * from emp
+where sal > all
+(select sal from emp
+where deptno = 30);
+
+-------------------------------------------------------------------------------------------------
+
+
+-- 서브쿼리 결과 값이 존재하는 경우
+
+select * from emp
+where exists (select dname from dept where deptno = 10);
+
+
+--------------------------------------------------------------------------------------------------
+
+비교할 열이 여러 개인 다중열 서브쿼리
+
+
+-- 다중열 서브쿼리 활용
+
+select * from emp
+where(deptno, sal) in (select deptno, max(sal) from emp
+group by deptno);
+
+------------------------------------------------------------------------------------------------
+
+from 절
+
+-- 인라인 뷰 사용
+
+select e10.empno, e10.ename, e10.deptno, d.dname, d.loc
+from (select * from emp where deptno = 10) e10,
+	(select * from dept) d
+	where e10.deptno = d.deptno;
+
+
+--
+select * from dept
+where deptno in
+(select deptno from emp
+where ename = 'JONES');
+
+
+-- with 절 사용
+
+with
+e10 as (select * from emp where deptno = 10),
+d as (select* from dept)
+select e10.empno,e10.ename,e10.deptno,d.dname,d.loc
+	from e10, d
+where e10.deptno = d.deptno;
+
+
+-- select 절에서 서브쿼리 사용
+
+select empno, ename, job, sal,
+	(select grade
+	from salgrade
+	where e.sal between losal and hisal) as salgrade,
+	deptno,
+	(select dname
+	from dept
+	where e.deptno = dept.deptno) as dname
+from emp e;
+
+
+select grade from salgrade, emp
+	where emp.sal between losal and hisal;
+
+----------------------------------------------------------------------------------------------------
+
+
+-- 10번 부서에 근무하는 사원중 30번 부서에는 존재하지 않는 직책을 가진 사원 정보, 부서정보 출력
+
+select e.empno, e.ename, e.job, e.deptno, d.dname, d.loc
+	from emp e, dept d
+	where e.deptno = d.deptno
+	and e.deptno = 10
+	and job not in(select job from emp where deptno = 30);
+
+
+두개의 테이블의 정보를 가져오려면
+외래키 값이 같아야함
+소속을 적어줘야 하기 때문에 별칭을 만들어 사용 (emp 'e', dept 'd')
+
+
+-- 전체 사원의 평균 급여보다 높은 급여를 받는 사원들의 사원 정보, 부서 정보, 급여 등급 출력
+
+select e.empno, e.ename, d.dname, e.hiredate, d.loc, e.sal, s.grade
+	from emp e, dept d, salgrade s
+	where e.deptno = d.deptno
+	and e.sal between s.losal and s.hisal
+	and sal > (select avg(sal) from emp)
+order by sal desc, empno;
+
+---------------------------------------------------------------------------------------------------------
+
+조인 : 여러 테이블을 하나의 테이블처럼 사용
+
+from 절 : 여러 테이블을 사욜때 사용
+
+
+-- from 절에 여러 테이블 선언
+
+select * from emp , dept
+order by empno;
+
+
+-- 열 이름을 비교하는 조건식으로 조인
+
+select * from emp, dept
+where emp.deptno = dept.deptno
+order by empno;
+
+조인 할때는 외래키를 통해서 진행
+
+외래키를 통해서 테이블과 테이블을 연결
+
+
+-- 테이블 이름 별칭으로 표현
+
+select * from emp e, dept d
+where e.deptno = d.deptno
+order by empno;
+
+---------------------------------------------------------------------------------------------------------
+
+등가조인 equi join : 조인하는 테이블 사이에서 공통으로 존재하는 컬럼의 값이 일치되는 행을 찾아 연결하여 
+	             결과를 생성
+
+where절의 조인 조건에 = 연산자를 사용한다.
+ 
+select 테이블명1.컬럼명1, 테이블명2.컬럼명2, .... from 테이블명1, 테이블명2
+where 테이블명1.컬럼명1 = 테이블명2.컬럼명2, .... ; - 컬럼명앞에 테이블명을 붙여 사용한다.
+
+
+-- scott의 부서와 같은 부서 번호를 갖는 사원의 이름, 부서번호, 부서이름을 구하세요
+
+select e.ename, e.deptno, d.dname
+from emp e, dept d
+where e.deptno = d.deptno
+and e.deptno = 
+	(select deptno from emp
+	where ename = 'SCOTT');
+
+
+------------------------------------------------------------------------------------------------------------
+
+비등가 조인 non-equi join  : 
+
+조인하는 두 개의 테이블의 특정 컬럼에 직접 일치하지 않을 경우에 사용
+
+조인할 테이블사이에 일차키와 외래키의 관계가 없다. 
+
+조인 조건에 = 이외의 연산자를 사용한다. 
+
+<=, >=, between...and (하한값 먼저 명시) 연산자 사용가능
+
+
+-- 급여 범위를 지정하는 조건식으로 조인 
+
+select * from emp e, salgrade s
+where e.sal between s.losal and s.hisal;
+
+-----------------------------------------------------------------------------------------------------------
+
+외부 조인 outer join : 조인 조건을 만족하지 못하는 행들을 출력하기 위해 사용
+
+select 테이블명1.컬럼명1, 테이블명2.컬럼명2,
+from 테이블명1, 테이블명2
+where 테이블명1.컬럼명1 = 테이블명2.컬럼명2(+) ;
+
+		or
+
+
+elect 테이블명1.컬럼명1, 테이블명2.컬럼명2,
+from 테이블명1, 테이블명2
+where 테이블명1.컬럼명1(+) = 테이블명2.컬럼명2 ;
+
+
+--
+
+select e.ename, d.deptno, d.dname
+from emp e , dept d
+where e.deptno(+) = d.deptno;
+
+
+select e.ename, e.deptno, d.dname
+from emp e , dept d
+where e.deptno(+) = d.deptno;
+
+(+) : 정보가 적은쪽에 써주면 된다.
+
+--------------------------------------------------------------------------------------------------------
+
+left outer join : 왼쪽 테이블이 기준이 되어 모든 데이터를 가져오고, 오른쪽 테이블에
+서 가져올 수 없는 열은 null로 출력
+
+select 테이블명1.컬럼명1, 테이블명2.컬럼명2,
+from 테이블명1 [ left | right ] outer join
+on 조인 조건
+
+
+-- 직원의 매니저를 출력
+
+select e1.ename, e2.ename
+from emp e1 left outer join emp e2
+on e1.mgr = e2.empno;
+
+
+right outer join : 오른쪽 테이블이 기준이 되어 모든 데이터를 가져오고, 왼쪽 테이블에
+서 가져올 수 없는 열은 null로 출력
+
+
+-- right outer join 활용
+
+select e.ename, e.deptno, d.dname
+from emp e right outer join dept d
+on e.deptno = d.deptno;
+
+-------------------------------------------------------------------------------------------------------------
+
+self join : 한 개의 테이블을 별개의 두 개 테이블처럼 사용하여 한 개의 테이블을 자체적으로 조인
+
+from 절에서 한 개의 테이블에 대해 두 개의 별칭을 사용
+
+
+-- self join 활용
+
+select e1.ename ||'의 매니저는' || e2.ename|| '이다.'
+from emp e1, emp e2
+where e1.mgr = e2.empno;
+
+
+--------------------------------------------------------------------------------------------------------------
+
+1. 이름이 'ALLEN' 인 사원의 부서 이름을 출력하라
+
+select e.ename, d.dname 
+from emp e, dept d
+where e.deptno = d.deptno
+and ename = 'ALLEN';
+
+select dname
+from dept
+where deptno = 
+(select deptno from emp where ename = 'ALLEN');
+
+2. 직무가 'ANALYST'인 어떤 사원보다 급여가 적으면서 직무가'ALALYST'가 아닌 사원들의 
+사원번호 이름 직무 급여를 출력
+
+select deptno, ename, job, sal from emp
+where sal < 
+(select min(sal) from emp
+where job = 'ANALYST')
+and not job = 'ANALYST';
+
+
+3. 부서이름이 'sales'인 사원들의 평균 급여보다 급여가 많고 부서 이름이 'research'인 사원들의
+평균 급여보다 급여가 적은 사원들의 이름 부서 번호 급여 직무 출력
+
+select e.ename, e.deptno, e.sal, e.job
+from emp e, dept d
+where e.deptno = d.deptno
+and e.sal between (select avg(sal) from emp where  deptno = 
+(select deptno from dept where
+dname = 'SALES')) and
+(select avg(sal) from emp where  deptno = 
+(select deptno from dept where
+dname = 'RESEARCH'));
+
+
+select ename , deptno, sal, job
+from emp
+where sal >
+(select avg(sal) from emp
+where deptno = 
+(select deptno from dept
+where dname = 'SALES'))
+and sal < (select avg(sal) from emp
+where deptno = 
+(select deptno from dept
+where dname = 'RESEARCH'));
+
+4. 'FORD'와 부서가 같은 사원들의 이름 부서 직무 급여를 출력
+
+select e.ename, d.dname, e.job, e.sal 
+from emp e, dept d
+where e.deptno = d.deptno
+and e.deptno = (select deptno from emp 
+where ename = 'FORD');
+
+
+5. 각 부서별 부서 번호, 부서 이름, 부서 위치, 사원의 수를 출력
+
+select d.deptno, d.dname, d.loc , count(e.ename) as cnt
+from emp e, dept d
+where e.deptno(+) = d.deptno
+group by d.deptno, d.dname, d.loc
+order by d.deptno;
+
+
+select d.deptno, d.dname, d.loc, count(e.ename)
+from emp e right outer join dept d
+on e.deptno = d.deptno
+group by d.deptno, d.dname, d.loc
+order by d.deptno;
+
+6. 전체 사원의 평균 급여보다 급여가 많은 사원의 사원번호, 이름, 부서이름, 입사일, 부서위치, 급여 출력
+
+select e.empno, e.ename, d.dname, e.hiredate, d.loc, e.sal
+from emp e, dept d
+where e.deptno = d.deptno
+and sal > (select avg(sal) from emp);
+
+---------------------------------------------------------------------------------------------------------------
+
+create : 테이블 생성
+
+drop : 테이블 삭제
+
+-- dept 테이블 복사하여 dept_temp 만들기
+
+create table dept_temp
+	as select * from dept;
+
+이미 만들어진 테이블에서 정보 가져와서 테이블 생성 
+
+** 테이블을 복사 할때는 제약사향, 키값등은 복사하지 않는다.
+
+
+-- 테이블에 데이터 추가
+
+insert into dept_temp (deptno, dname, loc)
+	values(50, 'database', 'SEOUL');
+
+select * from dept_temp;
+
+
+-- undo : rollback (DML만 commit 하기 직전까지 돌아감) 
+
+DDL : 사용하면 자동 commit. 되돌리기 불가 / ex) create
+ 
+** commit을 하면 이미 저장이 되기 때문에 롤백안됨
+
+
+
+-- null 지정하여 입력
+
+insert into dept_temp (deptno, dname, loc)
+	values (70, 'WEB', null);
+
+select * from dept_temp;
+
+
+-- 빈 공백 문자열로 null 입력
+
+insert into dept_temp (deptno, dname, loc)
+	values (80, 'MOBILE', ' ');
+
+select * from dept_temp;
+
+
+-- 열 데이터를 넣지 않고 null 입력
+
+insert into dept_temp (deptno, loc)
+	values (90 , 'INCHEON' );
+
+select * from dept_temp;
+
+------------------------------------------------------------------------------------------------------------
+
+-- emp 테이블 복사하여 emp_temp 만들기
+
+create table emp_temp
+	as select * from emp where 1 <> 1;
+
+select * from emp_temp;
+
+** 1 = 1이기 때문에 복사한 데이터가 없음 ( <> : 부정)
+
+
+
+-- to_date 함수를 사용하여 날짜 데이터 입력
+
+insert into emp_temp (empno,ename,job,mgr,hiredate,sal,comm,deptno)
+	values(2111,'이순신','MANAGER',9999, to_date('07/01/2001' , 'dd/mm/yyyy'), 4000, null , 20);
+
+select * from emp_temp;
+
+
+-- sysdate 를 사용하여 날짜 데이터 입력하기
+
+insert into emp_temp (empno,ename,job,mgr,hiredate,sal,comm,deptno)
+	values(3111,'심청이','MANAGER',9999,sysdate,4000,null,30);
+
+select * from emp_temp;
+
+
+-- 서브 쿼리로 여러 데이터 추가
+
+insert into emp_temp (empno,ename,job,mgr,hiredate,sal,comm,deptno)
+	select e.empno, e.ename, e.job, e.mgr, e.hiredate, e.sal, e.comm, e.deptno
+	from emp e, salgrade s
+	where e.sal between s.losal and s.hisal
+	and s.grade = 1;
+
+select * from emp_temp;
+
+
+** insert into한 값과 select한 값들의 순서, 형식들이 모두 일치해야 한다
+
+----------------------------------------------------------------------------------------------------------
+
+update : 
+
+-- dept 테이블을 복사하여 dept_temp2 테이블 만들기
+
+create table dept_temp2
+	as select * from dept;
+
+select * from dept_temp2;
+
+
+-- 테이블 데이터 중 일부분만 수정
+
+update dept_temp2
+set dname = 'DATABASE' ,
+	loc = 'SEOUL'
+	where deptno = 40;
+
+select * from dept_temp2;
+
+
+-- 서브쿼리로 데이터 일부분 수정하기
+
+update dept_temp2
+	set (dname,loc) = (select dname,loc from dept where deptno = 40)
+	where deptno = 40;
+
+select * from dept_temp2;
+
+
+-- update문의 where절에 서브쿼리 사용
+
+update dept_temp2
+	set loc = 'SEOUL'
+where deptno = (select deptno from dept_temp2 where dname = 'OPERATIONS');
+
+select * from dept_temp2;
+
+---------------------------------------------------------------------------------------------
+
+delete :
+
+
+-- emp_temp2 테이블 만들기
+
+create table emp_temp2
+	as select * from emp;
+
+select * from emp_temp2;
+
+
+-- where절 사용하여 데이터 일부분 삭제
+
+delete from emp_temp2
+	where job = 'MANAGER';
+
+select * from emp_temp2;
+
+
+--  where절에 서브쿼리 사용하여 데이터 일부 삭제
+
+delete from emp_temp2
+	where empno in (select e.empno
+			from emp_temp2 e, salgrade s
+			where e.sal between s.losal and s.hisal
+			and s.grade = 3
+			and deptno = 30);
+
+select * from emp_temp2;
+
+
+-- 테이블의 데이터 전체 삭제
+
+delete from emp_temp2;
+
+select * from emp_temp2;
+
+---------------------------------------------------------------------------------------------------------------
+
+create table emp_temp3
+	as select * from emp;
+
+3. 평균급여보다 많은 급여를 받는 사원의 부서 이동
+
+update emp_temp3
+	set deptno = 30
+	where sal >
+(select avg(sal)
+from emp_temp3
+where deptno = 20);
+
+4. 전체 사원 중 30번 부서의 사원 중 입사일이 가장 빠른사원보다 늦게 입사한 사원의 
+급여를 10% 인상하고 20번 부서로 이동
+
+update emp_temp3
+	set deptno = 20,
+	     sal = sal*1.1
+	where hiredate >
+(select min(hiredate) from emp_temp3 where deptno = 30);

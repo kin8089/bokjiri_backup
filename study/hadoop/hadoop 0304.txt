@@ -1,0 +1,142 @@
+ssh 공개키 사본 복사 : master name node에서 공개키 복사
+
+scp ~/.ssh/id_rsa.pub slave1:~/.ssh/authorized_keys
+
+데이터 노드 .ssh 디렉토리 다시 생성
+
+ssh-keygen -R 노드 네임 or IP 
+
+know 파일 삭제 
+
+재부팅
+
+---------------------------------------------------------------------------------
+
+hdfs-site.xml
+
+-- slave1 ~ 3
+
+cd /dfs
+
+mkdir data
+
+chown -R moon:moon /dfs/data
+
+
+-- data노드
+
+
+데이터 노드들에 추가
+
+
+vi $HADOOP_HOME/etc/hadoop/yarn-site.xml
+	<p>
+		<n>yarn.resourcemanager.hostname</n>
+		<v>master</v>
+	</p>
+
+
+
+secondary name(slave3) node 
+
+vi $HADOOP_HOME/etc/hadoop/hdfs-site.xml
+	<p>
+		<n>dfs.namenode.checkpoint.dir</n>
+		<v>file:///dfs/namesecondary</v>
+	</p>
+
+slave3 - cd /dfs
+
+	mkdir namesecondary
+
+	chown -R moon:moon /dfs/namesecondary
+
+
+vi $HADOOP_HOME/etc/hadoop/hdfs-site.xml
+	<p>
+		<n>dfs.datanode.data.dir</n>
+		<v>file:///dfs/data</v>
+	</p>
+
+
+
+slave1 - rsync -a ~/hadoop-3.2.2/etc/hadoop slave2:~/hadoop-3.2.2/etc/hadoop
+
+
+---------------------------------------------------------------------------------
+
+name node : ssh 키 생성
+
+ssh-keygen -t rsa
+
+cd ~/.ssh
+
+cp id_rsa.pub authorized_keys
+
+
+scp로 slave에 authorized_keys로 넘겨준다
+
+
+ssh slave1 : slave1 으로 접속
+
+-------------------------------------------------------------------
+
+-- 네임노드 포맷
+
+hdfs namenode -format
+
+cd /tmp/hadoop-moon/dfs/name/current/
+ls
+
+-- 포맷 확인
+
+cd /dfs/name/current
+
+cd /dfs/edits/current
+
+생성됐는지 확인
+
+
+
+-------------------------------------------------------------------
+
+하둡 클러스터 실행
+
+$HADOOP_HOME/sbin/start-all.sh
+
+
+hdfs dfs -명령어 -옵션 명령인자
+ex) hdfs dfs -mkdir -c /user/hadoop
+   ) hdfs dfs -ls -R
+
+
+명령어 put : 리눅스에서 HDFS로 파일 복사
+         get : HDFS에서 리눅스로 파일 복사
+
+
+
+----------------------------------------------------------------------
+
+CSV
+
+2008.csv.bz2 파일 다운
+
+naver.me/FH7Kdugr
+
+
+hdfs dfs -mkdir /airline/
+hdfs dfs -put 2008.csv
+hdfs dfs -ls /airline
+
+
+ssh slave1
+cd /dfs/data/current/BP-xxx/current/
+
+
+mv sparkXXXXX.tgz ../
+cd
+ll
+tar -xvf sparkXXXX.tgz
+mv sparkXXXXX spark-3.1.2
+cd spar~
+cp spark-env.sh.template saprk-env.sh
